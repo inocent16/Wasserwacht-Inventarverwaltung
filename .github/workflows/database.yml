@@ -10,6 +10,10 @@ on:
       - "supabase/**"
       - ".github/workflows/database.yml"
 
+concurrency:
+  group: supabase-database-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   database:
     runs-on: ubuntu-latest
@@ -23,7 +27,6 @@ jobs:
           version: latest
 
       - name: Start local Supabase stack and apply migrations
-        # Allow the CLI to create its local service lockfile on a clean runner.
         run: CI=false supabase start
 
       - name: Run PostgreSQL / pgTAP tests
