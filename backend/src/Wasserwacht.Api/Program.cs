@@ -15,6 +15,8 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<InventoryDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddScoped<Wasserwacht.Api.Infrastructure.AuditLog.AuditLogWriter>();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
