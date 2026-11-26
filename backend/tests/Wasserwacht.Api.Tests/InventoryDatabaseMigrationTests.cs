@@ -25,6 +25,7 @@ public sealed class InventoryDatabaseMigrationTests
         Assert.Contains("20261126203000_InitialInventorySchema", appliedMigrations);
 
         var connection = context.Database.GetDbConnection();
+        await context.Database.OpenConnectionAsync();
         await using var command = connection.CreateCommand();
 
         command.CommandText = """SELECT to_regclass('"AuditLog"') IS NOT NULL;""";
