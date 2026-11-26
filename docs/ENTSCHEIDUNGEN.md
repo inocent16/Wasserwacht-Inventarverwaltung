@@ -16,6 +16,10 @@ Die Kategorie wird zunächst als Text am Artikel gespeichert. Später wird auf e
 
 Das Backend-Grundmodell enthält Artikel, Standorte und Materialposten. Für die gesamte Anwendung gibt es genau ein zentrales Auditlog als einzige Quelle der Änderungshistorie. Eine separate Materialbewegungstabelle wird nicht verwendet. Auch Bestandszugänge, Verschiebungen und Entnahmen werden als Auditlog-Einträge protokolliert. Jeder Auditlog-Eintrag speichert – soweit für den jeweiligen Ereignistyp anwendbar – den vollständigen Zustand vor und nach der Änderung sowie die Identität des Benutzers, der die Änderung ausgelöst hat. Das konkrete Schema und die Referenzierungsstrategie werden vor der Implementierung festgelegt.
 
+## Benutzeranmeldung
+
+Version 1.0 besitzt eine Benutzeranmeldung mit persönlichen Benutzerkonten. Auditlog-Einträge ordnen jede Änderung dem angemeldeten Benutzer zu. Das Verfahren zur Anlage und Verwaltung lokaler Benutzerkonten ist noch festzulegen.
+
 ## Historie / Auditlog
 
 - Ein zentrales Auditlog protokolliert Änderungen in allen Anwendungsbereichen.
