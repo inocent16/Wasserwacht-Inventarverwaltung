@@ -41,11 +41,12 @@ Sollbestände sind optional und werden je Kombination aus Artikel und Standort f
 
 ## Benutzer und Anmeldung
 
-- Version 1.0 besitzt persönliche Benutzerkonten mit Anmeldung.
-- Zum Start gibt es ausschließlich die Rolle `Administrator`; jedes angelegte Konto erhält diese Rolle.
-- Benutzerkonten werden ausschließlich durch einen angemeldeten Administrator angelegt.
-- Jede reguläre Änderung erfolgt durch einen angemeldeten Benutzer und wird diesem im Auditlog zugeordnet.
-- Es gibt zunächst keine öffentliche Selbstregistrierung und keine zusätzliche Standardbenutzerrolle.
+- Version 1.0 besitzt persönliche Benutzerkonten mit Anmeldung über E-Mail-Adresse und Passwort (Supabase Auth).
+- Zum Start gibt es ausschließlich die Rolle `Administrator`.
+- Öffentliche Selbstregistrierung ist deaktiviert.
+- Neue Auth-Konten erhalten zunächst keine Anwendungsrolle. Das erste Administratorkonto wird kontrolliert per Bootstrap freigeschaltet; weitere Konten werden durch einen angemeldeten Administrator eingeladen und anschließend freigeschaltet.
+- Jede reguläre Änderung erfolgt durch einen angemeldeten Administrator und wird diesem im Auditlog zugeordnet.
+- Eine zusätzliche Standardbenutzerrolle oder feinere Berechtigungsstufen sind zunächst nicht vorgesehen.
 
 ## Materialbewegungen
 
@@ -73,11 +74,11 @@ Der Materialtausch soll ausgehend von einem vorhandenen Materialposten gestartet
 ## Technik und Plattform
 
 - Webanwendung
-- Frontend: React + TypeScript
-- Backend: ASP.NET Core
-- Datenbank: PostgreSQL
-- zunächst lokaler Betrieb
-- Mehrbenutzerfähigkeit architektonisch vorbereiten
+- Fullstack: SolidJS + TanStack Start / Router
+- Server-State: TanStack Query
+- Datenbank und Authentifizierung: Supabase Cloud / PostgreSQL / Supabase Auth
+- TypeScript und Zod
+- Mehrbenutzerfähigkeit und RLS von Anfang an berücksichtigen
 - mobile Anwendung erst nach der Webanwendung; gleicher Funktionsumfang
 
 ## Nicht für den ersten Kernumfang vorgesehen
