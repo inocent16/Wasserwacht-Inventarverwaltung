@@ -1,6 +1,6 @@
 begin;
 
-select plan(7);
+select plan(8);
 
 -- auth.users trigger creates the profiles. New profiles are not privileged.
 insert into auth.users (id, email)
