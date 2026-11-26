@@ -62,7 +62,7 @@ Schreibzugriffe:
 - Standorte: `create_location`, `update_location`, `delete_location`
 - Bestand: `receive_stock`, `transfer_stock`, `remove_stock_batch`
 
-RLS ist auf den Anwendungstabellen aktiviert. API-Rollen dürfen Daten nur als berechtigter Administrator lesen; direkte Tabellen-DML-Rechte sind entzogen. Schreibfunktionen prüfen die Administratorrolle selbst und schreiben die fachliche Änderung sowie genau einen AuditLog-Eintrag in einer Datenbanktransaktion.
+RLS ist auf den Anwendungstabellen aktiviert. `authenticated` darf Daten nur als berechtigter Administrator lesen. Direkte Tabellenrechte sind auch für `service_role` entzogen; der Secret-Key kann die Inventar-RPCs nicht ausführen. Schreibfunktionen prüfen die Administratorrolle selbst und schreiben die fachliche Änderung sowie genau einen AuditLog-Eintrag in einer Datenbanktransaktion.
 
 ## Datenbankvalidierung
 
