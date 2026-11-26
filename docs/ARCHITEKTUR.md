@@ -27,6 +27,7 @@ Die Anwendung wird als Webanwendung mit getrenntem Frontend und Backend umgesetz
 - Zusammenführungsregeln für Materialposten
 - Schutz vor negativen Beständen und konkurrierenden Änderungen
 - Authentifizierung und Autorisierung bereits für Version 1.0; persönliche Benutzerkonten
+- Benutzerkonten werden durch einen Administrator angelegt; der Administrator stellt den Benutzern ihre Zugangsdaten bereit
 - Zuordnung jeder protokollierten Änderung zum angemeldeten Benutzer
 
 ### Datenbank
