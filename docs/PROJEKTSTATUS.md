@@ -22,12 +22,14 @@ Noch nicht vorhanden:
 - fachliche Services und Validierungen
 - CRUD- und Bewegungsendpunkte
 - Authentifizierung und Benutzerverwaltung (für Version 1.0 verpflichtend; zunächst ausschließlich Rolle Administrator)
-- Auditlog-Schreibdienst und transaktionale Einbindung in fachliche Aktionen
+- zentraler `AuditLogWriter`, registriert in Dependency Injection; fügt je fachlicher Aktion genau einen Eintrag zum gemeinsamen DbContext hinzu und speichert nicht separat
+- Schutz im DbContext: Auditlog-Einträge können nach dem Anlegen nicht geändert oder gelöscht werden
 - Datenbankmigrationen für die zentrale `AuditLog`-Tabelle
+- Integration des Schreibdiensts in die noch nicht vorhandenen fachlichen Schreibservices; dadurch noch keine produktive Transaktionskette
 - React-Frontend
 - Docker-/lokale Startkonfiguration
 
-**Wichtig:** Der vorhandene Code ist weiterhin ein technisches Grundgerüst, keine lauffähige Produktversion. Das EF-Core-Modell enthält die zentrale `AuditLog`-Tabelle; der Build und die sieben vorhandenen Modelltests laufen in GitHub Actions erfolgreich. Eine echte PostgreSQL-Integration, fachliche API-Endpunkte und vollständige Anwendungstests existieren noch nicht.
+**Wichtig:** Der vorhandene Code ist weiterhin ein technisches Grundgerüst, keine lauffähige Produktversion. Das EF-Core-Modell enthält die zentrale `AuditLog`-Tabelle; der Build und alle 13 vorhandenen Tests laufen in GitHub Actions erfolgreich. Eine echte PostgreSQL-Integration der Migration und der Transaktionskette, fachliche API-Endpunkte und vollständige Anwendungstests existieren noch nicht.
 
 ## Verbindlicher Produktumfang
 
