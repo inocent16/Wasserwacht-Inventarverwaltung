@@ -50,12 +50,12 @@ Die Schichten können zunächst in einem ASP.NET-Core-Projekt liegen; sie sollen
 - `Features/Locations/`: Standort-Endpunkte, DTOs und Anwendungslogik
 - `Features/Stock/`: Bestandsabfragen und Materialposten
 - `Features/Movements/`: Zugang, Verschiebung, Sammelentnahme und Auswertung der Auditlog-Historie
-- `Infrastructure/`: technische Querschnittsthemen einschließlich Auditlog-Schreibdienst
+- `Infrastructure/`: technische Querschnittsthemen einschließlich des registrierten `AuditLogWriter`
 - `Common/`: Fehlerantworten und gemeinsame API-Bausteine
 
 ## Transaktionen und Konsistenz
 
-Jede Bestandsbewegung muss als eine atomare Datenbanktransaktion ablaufen. Bestandsänderung und zugehöriger Auditlog-Eintrag werden gemeinsam gespeichert. Schlägt ein Teil fehl, wird die gesamte Transaktion zurückgerollt.
+Jede fachliche Aktion erzeugt genau einen Eintrag in der zentralen AuditLog-Tabelle. Der `AuditLogWriter` hängt diesen Eintrag an denselben `InventoryDbContext` an und führt selbst kein `SaveChanges` aus. Der Anwendungscode speichert die fachlichen Änderungen und den einen Auditlog-Eintrag gemeinsam mit demselben `SaveChanges`; bei mehreren Speichervorgängen ist eine explizite Datenbanktransaktion zu verwenden. Schlägt ein Teil fehl, wird die gesamte Transaktion zurückgerollt.
 
 Änderungen in anderen Anwendungsbereichen werden ebenfalls mit ihrem Auditlog-Eintrag konsistent gespeichert. Das Auditlog ist die einzige Quelle der Änderungshistorie; eine separate Materialbewegungstabelle wird nicht geführt.
 
