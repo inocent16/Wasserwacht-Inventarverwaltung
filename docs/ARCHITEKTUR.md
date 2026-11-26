@@ -63,9 +63,9 @@ Bei parallelen Benutzern muss verhindert werden, dass zwei gleichzeitige Entnahm
 
 ## Historie und Löschung
 
-Der technische Entwurf für das Auditlog liegt in `AUDITLOG-KONZEPT.md`. Dort ist eine empfohlene Granularität mit einem Eintrag je betroffenem Datensatz und gemeinsamer `OperationId` für zusammengehörige Aktionen beschrieben; diese Detailentscheidung ist noch offen.
+Es gibt genau eine zentrale Auditlog-Tabelle und keine separate Materialbewegungstabelle. Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Eintrag, der den vollständigen Vorher- und Nachher-Zustand aller betroffenen Daten sowie den auslösenden Benutzer enthält. Damit werden auch Verschiebungen und Sammelentnahmen jeweils in einem Eintrag als Gesamtaktion dokumentiert. Der technische Tabellenentwurf steht in `AUDITLOG-KONZEPT.md`.
 
-Ein zentrales Auditlog protokolliert Änderungen in allen Anwendungsbereichen. Es ist die einzige Quelle der Historie; eine zusätzliche Materialbewegungstabelle ist ausdrücklich nicht vorgesehen. Die Bewegungsübersicht wird aus den relevanten Auditlog-Einträgen gebildet.
+Das Auditlog ist die einzige Quelle der Historie. Die Bewegungsübersicht wird ausschließlich aus den passenden Ereignissen dieser Tabelle gebildet.
 
 Audit-Einträge müssen unabhängig vom Lebenszyklus der betroffenen Datensätze erhalten bleiben. Historische Einträge dürfen daher nicht per Fremdschlüssel-Kaskade mit Artikeln, Standorten oder Materialposten gelöscht werden. Das konkrete Auditlog-Datenformat und die Referenzierungsstrategie werden vor der Implementierung festgelegt.
 
