@@ -23,6 +23,7 @@ select lives_ok(
     v_first_receipt jsonb;
     v_second_receipt jsonb;
     v_other_batch_receipt jsonb;
+    v_target_pre_receipt jsonb;
     v_transfer jsonb;
     v_removal jsonb;
     v_article_id uuid;
@@ -31,6 +32,7 @@ select lives_ok(
     v_source_stock_id uuid;
     v_other_batch_stock_id uuid;
     v_target_stock_id uuid;
+    v_target_pre_stock_id uuid;
     v_audit_before integer;
     v_audit_after integer;
     v_stock_count integer;
@@ -86,23 +88,32 @@ select lives_ok(
       raise exception 'expected exactly two distinct stock identities at source location';
     end if;
 
+    v_target_pre_receipt := public.receive_stock(
+      v_article_id, v_location_b_id, 1, null, null, null, 'pre-existing target stock'
+    );
+    v_target_pre_stock_id := (v_target_pre_receipt -> 'stock_item' ->> 'id')::uuid;
+
     v_transfer := public.transfer_stock(
       v_source_stock_id, v_location_b_id, 3, 'test transfer'
     );
     v_target_stock_id := (v_transfer -> 'target_stock_item' ->> 'id')::uuid;
 
+    if v_target_stock_id <> v_target_pre_stock_id then
+      raise exception 'transfer should merge into an exactly matching target stock item';
+    end if;
+
     if (v_transfer -> 'source_stock_item' ->> 'quantity')::integer <> 4 then
       raise exception 'source quantity after transfer should be 4';
     end if;
 
-    if (v_transfer -> 'target_stock_item' ->> 'quantity')::integer <> 3 then
-      raise exception 'target quantity after transfer should be 3';
+    if (v_transfer -> 'target_stock_item' ->> 'quantity')::integer <> 4 then
+      raise exception 'target quantity after transfer should be 4 (1 existing + 3 transferred)';
     end if;
 
     v_removal := public.remove_stock_batch(
       v_location_b_id,
       jsonb_build_array(
-        jsonb_build_object('stockItemId', v_target_stock_id, 'quantity', 3)
+        jsonb_build_object('stockItemId', v_target_stock_id, 'quantity', 4)
       ),
       'test full removal'
     );
@@ -118,11 +129,25 @@ select lives_ok(
       raise exception 'source stock item should remain with quantity 4';
     end if;
 
+    -- An invalid removal must roll back without appending an audit row.
+    begin
+      perform public.remove_stock_batch(
+        v_location_a_id,
+        jsonb_build_array(
+          jsonb_build_object('stockItemId', v_source_stock_id, 'quantity', 999)
+        ),
+        'must fail'
+      );
+      raise exception 'invalid removal unexpectedly succeeded' using errcode = 'P0001';
+    exception
+      when sqlstate '22023' then null;
+    end;
+
     select count(*)::integer into v_audit_after
     from public.audit_log;
 
-    if v_audit_after - v_audit_before <> 8 then
-      raise exception 'expected one audit row for each of 8 successful RPC actions; got %',
+    if v_audit_after - v_audit_before <> 9 then
+      raise exception 'expected one audit row for each of 9 successful RPC actions and none for the failed action; got %',
         v_audit_after - v_audit_before;
     end if;
   end
