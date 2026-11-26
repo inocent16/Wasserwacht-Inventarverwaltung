@@ -29,14 +29,14 @@ values (
 set local role anon;
 
 select throws_ok(
-  $$$select * from public.articles$$$,
+  $$select * from public.articles$$,
   '42501',
   null,
   'anon cannot read inventory tables'
 );
 
 select throws_ok(
-  $$$select public.create_location('anon-must-not-create', null)$$$,
+  $$select public.create_location('anon-must-not-create', null)$$,
   '42501',
   null,
   'anon cannot execute audited write RPCs'
@@ -89,7 +89,7 @@ select is(
 );
 
 select throws_ok(
-  $$$select public.create_location('unprivileged-must-not-create', null)$$$,
+  $$select public.create_location('unprivileged-must-not-create', null)$$,
   '42501',
   null,
   'authenticated user without administrator role cannot write'
