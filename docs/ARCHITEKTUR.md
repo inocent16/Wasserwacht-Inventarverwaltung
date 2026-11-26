@@ -26,13 +26,15 @@ Die Anwendung wird als Webanwendung mit getrenntem Frontend und Backend umgesetz
 - Transaktionsgrenzen
 - Zusammenführungsregeln für Materialposten
 - Schutz vor negativen Beständen und konkurrierenden Änderungen
-- Authentifizierung und Autorisierung bereits für Version 1.0; persönliche Benutzerkonten
-- Benutzerkonten werden durch einen Administrator angelegt; der Administrator stellt den Benutzern ihre Zugangsdaten bereit
-- Zuordnung jeder protokollierten Änderung zum angemeldeten Benutzer
+- Authentifizierung und Autorisierung sind bereits für Version 1.0 verpflichtend; persönliche Benutzerkonten
+- Zum Start existiert ausschließlich die Rolle `Administrator`; jedes angelegte Konto erhält diese Rolle. Es gibt zunächst keine zusätzliche Standardbenutzerrolle oder feinere Berechtigungsstufen
+- Benutzerkonten können nur durch einen angemeldeten Administrator angelegt werden; dieser stellt den neuen Benutzern ihre Zugangsdaten bereit
+- Jede protokollierte Änderung wird dem angemeldeten Benutzer zugeordnet
+- Das Anmeldeverfahren und die sichere erstmalige Einrichtung des ersten Administratorkontos müssen vor der Implementierung festgelegt werden
 
 ### Datenbank
 - dauerhafte Stammdaten und Bestände
-- ein zentrales Auditlog als einzige Quelle der Änderungshistorie für alle Anwendungsbereiche
+- ein verpflichtendes zentrales Auditlog als einzige Quelle der Änderungshistorie für alle Anwendungsbereiche
 - keine separate Materialbewegungstabelle
 - relationale Integritätsbedingungen
 - Transaktionen für alle mehrteiligen Bestandsänderungen
