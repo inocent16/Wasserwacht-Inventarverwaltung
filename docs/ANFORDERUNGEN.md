@@ -31,6 +31,22 @@ Bei Zugängen und Verschiebungen werden passende Materialposten zusammengeführt
 
 Sollbestände sind optional und werden je Kombination aus Artikel und Standort festgelegt. Es gibt keinen globalen Mindestwert. Ohne Sollbestand erfolgt kein Soll-Ist-Vergleich. Ein definierter Sollbestand muss mindestens 1 betragen.
 
+## Historie und Auditlog
+
+- Ein zentrales Auditlog protokolliert Änderungen in allen Anwendungsbereichen und ist die einzige Quelle der Änderungshistorie.
+- Jeder Eintrag enthält den vollständigen Vorher- und Nachher-Zustand, soweit für den Ereignistyp anwendbar, sowie den auslösenden Benutzer.
+- Die Historie bleibt auch nach dem Löschen eines aktuellen Materialpostens erhalten.
+- Die Bewegungshistorie wird aus den passenden Einträgen dieses Auditlogs dargestellt. Eine separate Materialbewegungstabelle gibt es nicht.
+- Bestandsänderung und zugehöriger Auditlog-Eintrag werden gemeinsam und transaktional gespeichert.
+
+## Benutzer und Anmeldung
+
+- Version 1.0 besitzt persönliche Benutzerkonten mit Anmeldung.
+- Zum Start gibt es ausschließlich die Rolle `Administrator`; jedes angelegte Konto erhält diese Rolle.
+- Benutzerkonten werden ausschließlich durch einen angemeldeten Administrator angelegt.
+- Jede reguläre Änderung erfolgt durch einen angemeldeten Benutzer und wird diesem im Auditlog zugeordnet.
+- Es gibt zunächst keine öffentliche Selbstregistrierung und keine zusätzliche Standardbenutzerrolle.
+
 ## Materialbewegungen
 
 - Zugang: Material zu einem beliebigen Standort hinzufügen.
@@ -50,7 +66,6 @@ Alle folgenden Funktionen sind optional und dürfen die Kern-Lagerverwaltung nic
 - Regelmäßige Kontrollen pro Standort
 - Nachfüllhinweise
 - Bestellkennzeichnung
-- Auditlog
 - Backup und Wiederherstellung
 
 Der Materialtausch soll ausgehend von einem vorhandenen Materialposten gestartet werden. Häufig wird derselbe Artikel mit einem neuen Ablaufdatum eingetragen. Die konkrete Umsetzung wird während der Implementierung entschieden.
