@@ -53,6 +53,7 @@ Mögliche unabhängig nutzbare Erweiterungen sind Sollbestände und Soll-Ist-War
 - [Entscheidungen](docs/ENTSCHEIDUNGEN.md)
 - [Offene Fragen – vor betroffenen Implementierungen klären](docs/OFFENE_FRAGEN.md)
 - [Architektur](docs/ARCHITEKTUR.md)
+- [Auditlog-Konzept (Entwurf)](docs/AUDITLOG-KONZEPT.md)
 - [Fachliches Datenmodell](docs/DOMAENENMODELL.md)
 - [API-Kontrakt (Entwurf)](docs/API-KONTRAKT.md)
 - [Entwicklerstart](docs/ENTWICKLERSTART.md)
