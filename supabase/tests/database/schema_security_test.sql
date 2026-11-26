@@ -1,6 +1,6 @@
 begin;
 
-select plan(16);
+select plan(19);
 
 select has_table('public', 'profiles', 'profiles table exists');
 select has_table('public', 'articles', 'articles table exists');
@@ -71,6 +71,23 @@ select ok(
     'EXECUTE'
   ),
   'authenticated can call inventory RPCs (the function checks administrator role)'
+);
+
+select ok(
+  not has_table_privilege('service_role', 'public.articles', 'SELECT'),
+  'service_role cannot directly read inventory tables'
+);
+select ok(
+  not has_table_privilege('service_role', 'public.stock_items', 'INSERT'),
+  'service_role cannot directly write stock items'
+);
+select ok(
+  not has_function_privilege(
+    'service_role',
+    'public.receive_stock(uuid,uuid,integer,date,text,text,text)',
+    'EXECUTE'
+  ),
+  'service_role cannot bypass audited stock RPCs'
 );
 
 select * from finish();
