@@ -26,7 +26,7 @@ Noch nicht vorhanden:
 - Schutz im DbContext: Auditlog-Einträge können nach dem Anlegen nicht geändert oder gelöscht werden
 - Initialmigration `20261126203000_InitialInventorySchema` für `Articles`, `Locations`, `StockItems` und die einzige zentrale `AuditLog`-Tabelle; EF-Core-Modellsnapshot vorhanden
 - EF-Core-Designzeitfactory und CI-Prüfung auf Abweichungen zwischen Modell und Snapshot
-- Migration wurde noch nicht gegen eine echte PostgreSQL-Instanz angewendet
+- PostgreSQL-Integrationstest in CI wendet die Migration auf PostgreSQL 17 an und prüft `AuditLog`, JSONB sowie das Fehlen einer `StockMovements`-Tabelle
 - Integration des Schreibdiensts in die noch nicht vorhandenen fachlichen Schreibservices; dadurch noch keine produktive Transaktionskette
 - React-Frontend
 - Docker-/lokale Startkonfiguration
