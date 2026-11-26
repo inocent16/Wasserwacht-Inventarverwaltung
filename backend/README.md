@@ -17,7 +17,7 @@ dotnet build
 dotnet run
 ```
 
-Es existieren derzeit noch keine Migrationen und keine fachlichen API-Endpunkte. Die Anwendung legt das Datenbankschema nicht automatisch an.
+Die initiale EF-Core-Migration `20261126203000_InitialInventorySchema` und der Modellsnapshot sind vorhanden. Sie legen `Articles`, `Locations`, `StockItems` und genau eine zentrale `AuditLog`-Tabelle an. Die Migration wird nicht automatisch beim Anwendungsstart ausgeführt.
 
 ## Tests
 
@@ -42,3 +42,18 @@ dotnet test tests/Wasserwacht.Api.Tests/Wasserwacht.Api.Tests.csproj --no-restor
 - Der Browser darf Bestände nicht direkt überschreiben; Änderungen laufen über Bewegungsservices.
 
 Siehe `../docs/ARCHITEKTUR.md`, `../docs/DOMAENENMODELL.md`, `../docs/API-KONTRAKT.md` und `../docs/OFFENE_FRAGEN.md`.
+
+## Datenbankmigration
+
+EF-Core-Designzeitwerkzeuge benötigen dieselbe explizite Verbindungsvariable wie die Anwendung. Es werden keine Zugangsdaten fest eingebaut.
+
+```bash
+# Eigene lokale Verbindungszeichenfolge setzen
+export WASSERWACHT_DB='Host=localhost;Database=wasserwacht_inventory;Username=<user>;Password=<password>'
+
+dotnet tool install --global dotnet-ef --version 10.0.15
+dotnet ef migrations list --project src/Wasserwacht.Api/Wasserwacht.Api.csproj --startup-project src/Wasserwacht.Api/Wasserwacht.Api.csproj
+dotnet ef database update --project src/Wasserwacht.Api/Wasserwacht.Api.csproj --startup-project src/Wasserwacht.Api/Wasserwacht.Api.csproj
+```
+
+Die GitHub-Actions-Pipeline prüft zusätzlich, ob das EF-Core-Modell vom gespeicherten Migrationssnapshot abweicht. Die Migration wird dort nicht auf eine produktive Datenbank angewendet.
