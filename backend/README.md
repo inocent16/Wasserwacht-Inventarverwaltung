@@ -21,7 +21,7 @@ Die initiale EF-Core-Migration `20261126203000_InitialInventorySchema` und der M
 
 ## Tests
 
-Die Tests liegen unter `tests/Wasserwacht.Api.Tests`. Sie prüfen bestätigte Datenregeln, die zentrale AuditLog-Tabelle, den Schreibdienst und den Schutz gegen nachträgliches Ändern/Löschen. Die aktuellen Modell- und Diensttests benötigen keine laufende PostgreSQL-Instanz.
+Die Tests liegen unter `tests/Wasserwacht.Api.Tests`. Modell- und Diensttests prüfen Datenregeln, die zentrale AuditLog-Tabelle, den Schreibdienst und den Schutz gegen nachträgliches Ändern/Löschen ohne Datenbankverbindung. Ein zusätzlicher Migrationstest benötigt eine separate, wegwerfbare PostgreSQL-Datenbank; GitHub Actions startet dafür einen kurzlebigen PostgreSQL-17-Dienst.
 
 ```bash
 cd backend
