@@ -10,6 +10,7 @@ public sealed class InventoryDbContext(DbContextOptions<InventoryDbContext> opti
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<StockItem> StockItems => Set<StockItem>();
     public DbSet<AuditLogEntry> AuditLog => Set<AuditLogEntry>();
+    public DbSet<InventoryUser> Users => Set<InventoryUser>();
 
     public override int SaveChanges()
     {
@@ -79,6 +80,16 @@ public sealed class InventoryDbContext(DbContextOptions<InventoryDbContext> opti
             entity.HasOne(x => x.Location).WithMany(x => x.StockItems)
                 .HasForeignKey(x => x.LocationId).OnDelete(DeleteBehavior.Restrict);
             entity.HasIndex(x => new { x.ArticleId, x.LocationId, x.ExpirationDate, x.BatchNumber });
+        });
+
+        modelBuilder.Entity<InventoryUser>(entity =>
+        {
+            entity.ToTable("Users");
+            entity.Property(x => x.UserName).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.NormalizedUserName).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.DisplayName).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.PasswordHash).HasMaxLength(1000).IsRequired();
+            entity.HasIndex(x => x.NormalizedUserName).IsUnique();
         });
 
         modelBuilder.Entity<AuditLogEntry>(entity =>
