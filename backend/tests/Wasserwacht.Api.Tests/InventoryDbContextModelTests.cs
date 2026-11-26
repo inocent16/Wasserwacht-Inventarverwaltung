@@ -160,6 +160,43 @@ public sealed class InventoryDbContextModelTests
         Assert.Empty(context.AuditLog.Local);
     }
 
+
+    [Fact]
+    public void AuditLogEntries_CannotBeUpdated()
+    {
+        using var context = CreateContext();
+        var existingEntry = new AuditLogEntry
+        {
+            ActorUserId = Guid.NewGuid(),
+            ActorNameSnapshot = "admin",
+            EventType = "ArticleCreated"
+        };
+        context.Attach(existingEntry);
+        context.Entry(existingEntry).Property(x => x.EventType).IsModified = true;
+
+        var exception = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
+
+        Assert.Contains("append-only", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void AuditLogEntries_CannotBeDeleted()
+    {
+        using var context = CreateContext();
+        var existingEntry = new AuditLogEntry
+        {
+            ActorUserId = Guid.NewGuid(),
+            ActorNameSnapshot = "admin",
+            EventType = "ArticleCreated"
+        };
+        context.Attach(existingEntry);
+        context.Remove(existingEntry);
+
+        var exception = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
+
+        Assert.Contains("append-only", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static InventoryDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<InventoryDbContext>()
