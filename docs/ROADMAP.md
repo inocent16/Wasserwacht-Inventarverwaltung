@@ -12,7 +12,7 @@
 - [ ] PostgreSQL-Migrationen einrichten
 - [ ] Health-/Readiness-Prüfung ergänzen
 - [ ] einheitliche Fehlerantworten und Validierung
-- [ ] Testprojekte und CI-Build einrichten
+- [x] Testprojekt und CI-Build einrichten (Build erfolgreich; 4 Modelltests bestanden)
 - [ ] Authentifizierungsverfahren und sichere erstmalige Einrichtung des ersten Administratorkontos festlegen
 - [ ] Anmeldung mit persönlichen Konten und ausschließlich der Rolle `Administrator` implementieren
 - [ ] Konkretes Datenmodell und Schreibdienst für das zentrale Auditlog festlegen; vor den ersten fachlichen Schreibendpunkten umsetzen
