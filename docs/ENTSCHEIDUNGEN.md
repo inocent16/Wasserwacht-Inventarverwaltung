@@ -14,7 +14,7 @@ Die Kategorie wird zunächst als Text am Artikel gespeichert. Später wird auf e
 
 ## Datenmodell – erster Stand
 
-Das Backend-Grundmodell enthält Artikel, Standorte und Materialposten. Für die gesamte Anwendung gibt es genau ein zentrales Auditlog als einzige Quelle der Änderungshistorie. Eine separate Materialbewegungstabelle wird nicht verwendet. Auch Bestandszugänge, Verschiebungen und Entnahmen werden als Auditlog-Einträge protokolliert. Jeder Auditlog-Eintrag speichert – soweit für den jeweiligen Ereignistyp anwendbar – den vollständigen Zustand vor und nach der Änderung sowie die Identität des Benutzers, der die Änderung ausgelöst hat. Das konkrete Schema und die Referenzierungsstrategie werden vor der Implementierung festgelegt.
+Das Backend-Grundmodell enthält Artikel, Standorte und Materialposten. Für die gesamte Anwendung gibt es genau eine zentrale Auditlog-Tabelle als einzige Quelle der Änderungshistorie. Es gibt keine `StockMovement`-Tabelle, keine separate Bewegungshistorie und kein zweites Protokollsystem. Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Auditlog-Eintrag. Auch Bestandszugänge, Verschiebungen und Sammelentnahmen werden jeweils als eine Aktion in diesem zentralen Auditlog protokolliert. Jeder Eintrag speichert – soweit für den jeweiligen Ereignistyp anwendbar – den vollständigen Zustand aller betroffenen Daten vor und nach der Aktion sowie die Identität des Benutzers, der die Änderung ausgelöst hat. Die fachliche Änderung und der eine dazugehörige Auditlog-Eintrag werden gemeinsam transaktional gespeichert.
 
 ## Benutzeranmeldung
 
