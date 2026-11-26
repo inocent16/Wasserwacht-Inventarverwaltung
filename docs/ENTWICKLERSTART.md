@@ -29,6 +29,27 @@ Für reine UI-Arbeit können die Zugangsdaten zunächst leer bleiben. Sobald Sup
 
 Das Repository ist noch nicht mit einer konkreten Supabase-Instanz verbunden. Es gibt daher noch keine produktive Datenbank oder Zugangsdaten im Repository.
 
+## Supabase Auth und erster Administrator
+
+Die Anwendung verwendet E-Mail-Adresse und Passwort. Öffentliche Selbstregistrierung muss im Supabase-Dashboard unter Authentication > Sign In / Providers bzw. den Auth-URL-/Signup-Einstellungen deaktiviert werden; der E-Mail-Provider für die Anmeldung muss dabei aktiviert bleiben.
+
+Nach dem Anwenden der Migration `20261126233000_profiles_and_admin_role.sql` wird das erste Konto kontrolliert angelegt:
+
+1. Im Supabase-Dashboard unter Authentication > Users das erste Konto manuell anlegen (E-Mail und initiales Passwort; E-Mail-Bestätigung passend zur Betriebsentscheidung konfigurieren).
+2. Im SQL Editor die Profilrolle gezielt für genau diese E-Mail freischalten:
+
+~~~sql
+update public.profiles p
+set role = 'administrator', updated_at = now()
+from auth.users u
+where p.id = u.id
+  and lower(u.email) = lower('erste-admin-adresse@example.org');
+~~~
+
+3. Prüfen, dass genau eine Zeile geändert wurde. Keine öffentliche Registrierung aktivieren, um weitere Konten anzulegen.
+
+Das Profil-Trigger legt neue Profile absichtlich mit `role = NULL` an. Solche Konten können sich zwar authentifizieren, erhalten aber keinen Zugriff auf die Inventarverwaltung. Die Admin-Einladungsfunktion wird später serverseitig mit einem Supabase Secret Key implementiert; dieser Schlüssel darf niemals im Browser verfügbar sein.
+
 ## Sicherheitsregeln
 - Keine echten Zugangsdaten oder API-Secrets committen.
 - Publishable Key darf im Browser verwendet werden; er ersetzt keine RLS-Policy.
