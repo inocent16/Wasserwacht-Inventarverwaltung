@@ -32,7 +32,7 @@ public sealed class InventoryDbContext(DbContextOptions<InventoryDbContext> opti
         modelBuilder.Entity<StockItem>(entity =>
         {
             entity.ToTable("StockItems", table =>
-                table.HasCheckConstraint("CK_StockItems_Quantity_NonNegative", "\"Quantity\" >= 0"));
+                table.HasCheckConstraint("CK_StockItems_Quantity_Positive", "\"Quantity\" > 0"));
             entity.Property(x => x.BatchNumber).HasMaxLength(200);
             entity.Property(x => x.Manufacturer).HasMaxLength(200);
             entity.HasOne(x => x.Article).WithMany(x => x.StockItems)
