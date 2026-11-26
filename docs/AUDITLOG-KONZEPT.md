@@ -1,52 +1,52 @@
-# Zentrales Auditlog
+# Zentrales AuditLog
 
 ## Verbindliche Festlegung
 
-- Es gibt genau **eine zentrale Auditlog-Tabelle** für die gesamte Anwendung.
-- Diese Tabelle ist die einzige Quelle der Änderungshistorie – auch für Materialzugänge, Verschiebungen und Sammelentnahmen.
-- Es gibt keine `StockMovement`-Tabelle, keine separate Bewegungshistorie und kein zweites Protokollsystem.
-- Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Auditlog-Eintrag.
-- Der Eintrag enthält den vollständigen Vorher- und Nachher-Zustand aller von dieser Aktion betroffenen Daten, soweit für das Ereignis anwendbar.
-- Der Eintrag ordnet die Aktion dem angemeldeten Benutzer zu.
-- Die fachliche Änderung und genau dieser Auditlog-Eintrag werden gemeinsam in derselben Datenbanktransaktion gespeichert.
-- Auditlog-Einträge bleiben erhalten, auch wenn aktuelle Artikel, Standorte oder Materialposten später gelöscht werden.
+- Es gibt genau **eine zentrale AuditLog-Tabelle**: `public.audit_log`.
+- Sie ist die einzige Quelle der Änderungshistorie – auch für Materialzugänge, Verschiebungen und Sammelentnahmen.
+- Es gibt keine `stock_movements`-Tabelle, keine separate Bewegungshistorie und kein zweites Protokollsystem.
+- Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen AuditLog-Eintrag.
+- Der Eintrag enthält den vollständigen Vorher- und Nachher-Zustand aller von dieser Aktion betroffenen Daten, soweit für den Ereignistyp anwendbar.
+- Der Eintrag ordnet die Aktion dem angemeldeten Auth-Benutzer zu.
+- Fachliche Änderung und genau dieser AuditLog-Eintrag werden innerhalb derselben PostgreSQL-Transaktion gespeichert.
+- AuditLog-Einträge bleiben erhalten, auch wenn aktuelle Artikel, Standorte oder Materialposten später gelöscht werden.
 
-## Beispiele für einen Eintrag je Aktion
+## Ereignisse
 
-- **Artikel ändern:** Ein Eintrag mit dem vollständigen Artikelzustand vor und nach der Änderung.
-- **Zugang:** Ein Eintrag mit dem Zustand des betroffenen Materialpostens vor und nach dem Zugang. Bei einem neu angelegten Posten ist der Vorher-Zustand `null`.
-- **Verschiebung:** Ein Eintrag für die gesamte Verschiebung. Der Vorher-Zustand enthält den vollständigen Quell- und Zielbestand vor der Aktion; der Nachher-Zustand enthält beide Zustände nach der Aktion.
-- **Sammelentnahme:** Ein Eintrag für die gesamte Sammelentnahme. Vorher- und Nachher-Zustand enthalten alle von der Sammelentnahme betroffenen Materialposten.
-- **Löschen:** Ein Eintrag mit dem vollständigen Zustand vor der Löschung und `null` als Nachher-Zustand, soweit es sich um einen einzelnen gelöschten Datensatz handelt.
+- `article_created`, `article_updated`, `article_deleted`
+- `location_created`, `location_updated`, `location_deleted`
+- `stock_received`
+- `stock_transferred`
+- `stock_removal_batch`
 
-Es werden nicht mehrere Auditlog-Einträge für die einzelnen Seiten einer Verschiebung oder für jede Position einer Sammelentnahme erzeugt. Die komplette Aktion wird in einem Eintrag zusammengehalten.
+Eine Verschiebung wird nicht in zwei Einträge für Quelle und Ziel aufgeteilt. Eine Sammelentnahme wird nicht pro Position einzeln protokolliert.
 
-## Technischer Tabellenentwurf
+## Tabellenstruktur
 
-Die endgültigen Namen und Typen werden in der EF-Core-Konfiguration festgelegt. Inhaltlich werden mindestens folgende Informationen benötigt:
+Die erste SQL-Implementierung verwendet:
 
-| Information | Zweck |
-| --- | --- |
-| Eindeutige ID | Identifiziert den Auditlog-Eintrag und damit die Aktion |
-| Zeitpunkt (UTC) | Zeitpunkt der erfolgreich gespeicherten Änderung |
-| Benutzer-ID | Zuordnung zum auslösenden Benutzer |
-| Benutzername-Snapshot | Lesbare Zuordnung auch dann, wenn sich der Benutzername später ändert |
-| Ereignistyp | Art der Aktion, z. B. Artikeländerung, Zugang, Verschiebung oder Sammelentnahme |
-| Vorher-Zustand (JSONB) | Vollständiger Snapshot aller betroffenen Daten vor der Aktion |
-| Nachher-Zustand (JSONB) | Vollständiger Snapshot aller betroffenen Daten nach der Aktion |
+| Spalte | Typ | Zweck |
+| --- | --- | --- |
+| `id` | UUID | Identifiziert den Aktionseintrag |
+| `occurred_at_utc` | timestamptz | Zeitpunkt der gespeicherten Änderung |
+| `actor_user_id` | UUID | Unveränderliche Supabase-Auth-User-ID, ohne FK |
+| `actor_name_snapshot` | varchar(200) | E-Mail-Snapshot zum Änderungszeitpunkt |
+| `event_type` | varchar(100) | Ereignistyp |
+| `before_state` | JSONB | Vollständige Zustände vor der Aktion |
+| `after_state` | JSONB | Vollständige Zustände nach der Aktion |
+| `metadata` | JSONB | Optionale Zusatzangaben wie eine Notiz, keine zweite Historie |
 
-Es wird keine einzelne `EntityId` als einzige Zielreferenz vorausgesetzt, weil eine Aktion mehrere Datensätze betreffen kann. Die betroffenen Datensatz-IDs sind Bestandteil der Snapshots.
-
-Die Snapshots enthalten ausschließlich die vollständigen fachlichen Zustände und IDs, keine EF-Navigationseigenschaften oder zyklischen Objektgraphen. Der Vorher- und Nachher-Zustand wird als zusammengehöriger Snapshot der gesamten Aktion gespeichert.
+Bei einer Neuanlage ist `before_state` SQL-NULL; bei einer Löschung ist `after_state` SQL-NULL. Verschiebungs- und Sammelentnahme-Snapshots gruppieren alle betroffenen Positionen zu einer fachlichen Gesamtaktion.
 
 ## Schutz und Konsistenz
 
-- Die Anwendung legt Auditlog-Einträge an; im normalen Betrieb werden bestehende Einträge weder geändert noch gelöscht.
-- Es gibt keine Fremdschlüssel-Kaskade vom Auditlog zu aktuellen Stammdaten oder Materialposten.
-- Jede schreibende fachliche Aktion muss den Auditlog-Eintrag in derselben Transaktion speichern. Scheitert das Protokollieren, wird auch die fachliche Änderung zurückgerollt.
-- Die Historienansicht für Materialbewegungen liest ausschließlich aus dieser Auditlog-Tabelle und filtert nach den entsprechenden Ereignistypen.
-- Ein technischer Schreibdienst darf verwendet werden; er schreibt ausschließlich in dieselbe zentrale Auditlog-Tabelle und bildet kein zweites Protokoll.
+- RLS erlaubt das Lesen nur Administratoren.
+- Direkte INSERT-/UPDATE-/DELETE-Rechte werden den API-Rollen nicht erteilt.
+- Die SQL-Funktion `prevent_audit_log_mutation` blockiert UPDATE und DELETE zusätzlich per Trigger.
+- Nur kontrollierte SECURITY DEFINER-RPCs können schreiben; sie prüfen zuerst die Datenbankrolle `administrator`.
+- Jede RPC führt alle fachlichen Änderungen und das eine AuditLog-INSERT innerhalb desselben Aufrufs und derselben Transaktion aus. Fehler führen zum vollständigen Rollback.
+- AuditLog hat absichtlich keine Fremdschlüssel auf Artikel, Standorte, Materialposten oder Auth-Profile. Historische Zustände bleiben so unabhängig von der Löschung aktueller Datensätze und Benutzerkonten erhalten.
 
-## Noch auszuarbeitende Implementierungsdetails
+## Historienansicht
 
-Die konkreten Ereignistypen, JSON-Feldnamen, Indizes und EF-Core-Konfiguration sind technische Ausgestaltung dieses bereits festgelegten Modells. Sie ändern nichts an den verbindlichen Punkten: **eine Tabelle, ein Eintrag pro Aktion, vollständiger Vorher-/Nachher-Zustand, auslösender Benutzer.**
+Die Historienansicht liest ausschließlich `public.audit_log` und filtert die Ereignistypen `stock_received`, `stock_transferred` und `stock_removal_batch`. Es gibt keine zweite Materialbewegungsquelle.
