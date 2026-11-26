@@ -12,7 +12,8 @@ Es entsteht eine lokale Webanwendung zur Verwaltung des Materials einer Wasserwa
 Vorhanden:
 - ASP.NET-Core-Webprojekt unter `backend/src/Wasserwacht.Api`
 - Entity-Framework-Core-/Npgsql-Abhängigkeiten
-- erste Domainklassen für Artikel, Standorte, Materialposten und Bewegungsdatensätze
+- Domainklassen für Artikel, Standorte und Materialposten
+- zentrale `AuditLogEntry`-Entität und genau eine `AuditLog`-Tabelle im EF-Core-Modell
 - EF-Core-DbContext und einfacher Health-Endpunkt
 - grundlegende Anforderungen und Entscheidungen in `docs/`
 
@@ -21,13 +22,12 @@ Noch nicht vorhanden:
 - fachliche Services und Validierungen
 - CRUD- und Bewegungsendpunkte
 - Authentifizierung und Benutzerverwaltung (für Version 1.0 verpflichtend; zunächst ausschließlich Rolle Administrator)
-- zentrales Auditlog als implementierte Historienquelle (noch nicht implementiert; genau eine Zeile je abgeschlossener fachlicher Aktion)
+- Auditlog-Schreibdienst und transaktionale Einbindung in fachliche Aktionen
+- Datenbankmigrationen für die zentrale `AuditLog`-Tabelle
 - React-Frontend
-- xUnit-Modelltests unter `backend/tests/Wasserwacht.Api.Tests` (4 Tests)
-- GitHub-Actions-CI mit erfolgreichem Restore, Build und Testlauf
 - Docker-/lokale Startkonfiguration
 
-**Wichtig:** Der vorhandene Code ist weiterhin ein technisches Grundgerüst, keine lauffähige Produktversion. Der Backend-Build und die vier vorhandenen Modelltests laufen in GitHub Actions erfolgreich. Eine echte PostgreSQL-Integration, fachliche API-Endpunkte und vollständige Anwendungstests existieren noch nicht.
+**Wichtig:** Der vorhandene Code ist weiterhin ein technisches Grundgerüst, keine lauffähige Produktversion. Das EF-Core-Modell enthält die zentrale `AuditLog`-Tabelle; der Build und die sieben vorhandenen Modelltests laufen in GitHub Actions erfolgreich. Eine echte PostgreSQL-Integration, fachliche API-Endpunkte und vollständige Anwendungstests existieren noch nicht.
 
 ## Verbindlicher Produktumfang
 
