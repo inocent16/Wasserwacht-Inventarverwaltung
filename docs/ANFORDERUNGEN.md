@@ -33,11 +33,11 @@ Sollbestände sind optional und werden je Kombination aus Artikel und Standort f
 
 ## Historie und Auditlog
 
-- Ein zentrales Auditlog protokolliert Änderungen in allen Anwendungsbereichen und ist die einzige Quelle der Änderungshistorie.
+- Genau eine zentrale Auditlog-Tabelle protokolliert Änderungen in allen Anwendungsbereichen und ist die einzige Quelle der Änderungshistorie. Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Eintrag; eine Verschiebung oder Sammelentnahme wird nicht in mehrere Protokolleinträge aufgeteilt.
 - Jeder Eintrag enthält den vollständigen Vorher- und Nachher-Zustand, soweit für den Ereignistyp anwendbar, sowie den auslösenden Benutzer.
 - Die Historie bleibt auch nach dem Löschen eines aktuellen Materialpostens erhalten.
-- Die Bewegungshistorie wird aus den passenden Einträgen dieses Auditlogs dargestellt. Eine separate Materialbewegungstabelle gibt es nicht.
-- Bestandsänderung und zugehöriger Auditlog-Eintrag werden gemeinsam und transaktional gespeichert.
+- Die Bewegungshistorie wird aus den passenden Ereignissen derselben Auditlog-Tabelle dargestellt. Eine separate Materialbewegungstabelle gibt es nicht.
+- Alle Bestandsänderungen einer Aktion und der eine zugehörige Auditlog-Eintrag werden gemeinsam und transaktional gespeichert.
 
 ## Benutzer und Anmeldung
 
