@@ -65,14 +65,15 @@ Version 1.0 unterstützt persönliche Benutzerkonten mit Anmeldung. Zum Start gi
 
 ## Auditlog und Materialbewegungen
 
-Es gibt genau ein zentrales Auditlog für Änderungen in allen Anwendungsbereichen. Eine separate Materialbewegungstabelle ist nicht vorgesehen.
+Es gibt genau eine zentrale Auditlog-Tabelle für Änderungen in allen Anwendungsbereichen. Sie ist die einzige Quelle der Historie. Es gibt keine `StockMovement`-Tabelle, keine separate Materialbewegungshistorie und kein zweites Protokollsystem.
 
-Das Auditlog protokolliert unter anderem die fachlichen Vorgänge:
+Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Auditlog-Eintrag. Das gilt für:
 - Zugang: Material an einem Standort hinzufügen
 - Verschiebung: eine Menge von einem Standort zu einem anderen bewegen
 - Sammelentnahme: mehrere Positionen aus einem Standort in einem Vorgang entnehmen
+- Änderungen an Artikeln, Standorten und weiteren Anwendungsbereichen
 
-Die Bewegungshistorie wird aus den entsprechenden Auditlog-Einträgen dargestellt. Eine Sammelentnahme muss als fachlich zusammengehöriger Vorgang erkennbar sein. Jeder Auditlog-Eintrag speichert den vollständigen Vorher- und Nachher-Zustand der betroffenen Daten, soweit für das Ereignis anwendbar, sowie die Identität des auslösenden Benutzers. Das konkrete Datenformat und die Zuordnung zusammengehöriger Einträge sind vor der Implementierung festzulegen.
+Der eine Eintrag einer Aktion enthält den vollständigen Vorher- und Nachher-Zustand aller von dieser Aktion betroffenen Daten, soweit für das Ereignis anwendbar, sowie die Identität des auslösenden Benutzers. Bei einer Verschiebung enthält er also Quelle und Ziel gemeinsam; bei einer Sammelentnahme alle Positionen gemeinsam. Die Bewegungshistorie wird ausschließlich aus dieser einen Auditlog-Tabelle dargestellt. Die technische Ausgestaltung ist in `AUDITLOG-KONZEPT.md` beschrieben.
 
 ## Sollbestand
 
