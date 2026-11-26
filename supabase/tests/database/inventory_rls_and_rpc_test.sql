@@ -29,14 +29,14 @@ values (
 set local role anon;
 
 select throws_ok(
-  $$select * from public.articles$$,
+  $$$select * from public.articles$$$,
   '42501',
   null,
   'anon cannot read inventory tables'
 );
 
 select throws_ok(
-  $$select public.create_location('anon-must-not-create', null)$$,
+  $$$select public.create_location('anon-must-not-create', null)$$$,
   '42501',
   null,
   'anon cannot execute audited write RPCs'
@@ -55,14 +55,14 @@ select is(
 );
 
 select throws_ok(
-  $insert into public.articles (name, category) values ('bypass', 'test')$,
+  $$insert into public.articles (name, category) values ('bypass', 'test')$$,
   '42501',
   null,
   'administrator cannot bypass audited RPC with direct table INSERT'
 );
 
 select lives_ok(
-  $select public.create_location('pgTAP admin location', 'created by database test')$,
+  $$select public.create_location('pgTAP admin location', 'created by database test')$$,
   'administrator can create a location through the audited RPC'
 );
 
@@ -74,7 +74,7 @@ select is(
 
 reset role;
 select throws_ok(
-  $update public.audit_log set event_type = 'tampered' where event_type = 'location_created'$,
+  $$update public.audit_log set event_type = 'tampered' where event_type = 'location_created'$$,
   '55000',
   null,
   'audit_log trigger prevents UPDATE even when table privileges exist'
@@ -89,7 +89,7 @@ select is(
 );
 
 select throws_ok(
-  $$select public.create_location('unprivileged-must-not-create', null)$$,
+  $$$select public.create_location('unprivileged-must-not-create', null)$$$,
   '42501',
   null,
   'authenticated user without administrator role cannot write'
