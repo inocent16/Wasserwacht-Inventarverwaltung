@@ -26,7 +26,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = public, pg_temp
+set search_path = ''
 as $$
   select exists (
     select 1
@@ -52,7 +52,7 @@ create or replace function public.handle_new_auth_user()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, pg_temp
+set search_path = ''
 as $$
 begin
   insert into public.profiles (id, email, role)
@@ -73,7 +73,7 @@ create or replace function public.sync_auth_user_email()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, pg_temp
+set search_path = ''
 as $$
 begin
   update public.profiles
