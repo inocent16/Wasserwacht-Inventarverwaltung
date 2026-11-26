@@ -26,11 +26,9 @@ Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen AuditLog-Ei
 ## Benutzeranmeldung
 Version 1.0 besitzt persönliche Benutzerkonten. Zum Start gibt es ausschließlich die Rolle `Administrator`; eine zusätzliche Standardbenutzerrolle oder feinere Berechtigungsstufen sind zunächst nicht vorgesehen. Öffentliche Selbstregistrierung ist nicht vorgesehen.
 
-Supabase Auth übernimmt Identität und Sitzung. Vor Implementierung sind festzulegen:
-- E-Mail-Login oder kontrollierte Abbildung des bisherigen Benutzernamens auf E-Mail-Adressen
-- sichere Erstanlage des ersten Administratorkontos
-- Passwortänderung und Passwortzurücksetzung
-- Admin-Flow zur Anlage weiterer Konten
+Supabase Auth übernimmt Identität und Sitzung. **Anmeldung erfolgt mit E-Mail-Adresse und Passwort.** Öffentliche Selbstregistrierung ist deaktiviert. Vor Implementierung der restlichen Kontoverwaltung sind noch die Passwortänderung/-zurücksetzung und der Admin-Einladungsablauf festzulegen.
+
+Neue Profile erhalten ausdrücklich zunächst keine Anwendungsrolle. Die Rolle `administrator` wird für das erste Konto einmalig durch einen kontrollierten Bootstrap vergeben; weitere Konten erhalten sie erst über einen geschützten Admin-Einladungsprozess. Dadurch führt ein versehentlich aktiviertes öffentliches Signup nicht zu Administratorzugriff.
 
 ## Historie / Auditlog
 - Das zentrale Auditlog ist verbindlicher Bestandteil des Kernsystems.
