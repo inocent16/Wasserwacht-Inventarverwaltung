@@ -4,8 +4,13 @@ using Wasserwacht.Api.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Inventory")
-    ?? Environment.GetEnvironmentVariable("WASSERWACHT_DB")
-    ?? "Host=localhost;Port=5432;Database=wasserwacht_inventory;Username=postgres;Password=postgres";
+    ?? Environment.GetEnvironmentVariable("WASSERWACHT_DB");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "Database connection is missing. Configure ConnectionStrings:Inventory or WASSERWACHT_DB.");
+}
 
 builder.Services.AddDbContext<InventoryDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -22,3 +27,5 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
 app.Run();
+
+public partial class Program;
