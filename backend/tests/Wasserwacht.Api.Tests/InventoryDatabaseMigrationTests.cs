@@ -34,6 +34,16 @@ public sealed class InventoryDatabaseMigrationTests
         command.CommandText = """SELECT to_regclass('"StockMovements"') IS NULL;""";
         Assert.True((bool)(await command.ExecuteScalarAsync())!);
 
+        command.CommandText = """SELECT to_regclass('"Users"') IS NOT NULL;""";
+        Assert.True((bool)(await command.ExecuteScalarAsync())!);
+
+        command.CommandText = """
+            SELECT is_nullable
+            FROM information_schema.columns
+            WHERE table_name = 'Users' AND column_name = 'PasswordHash';
+            """;
+        Assert.Equal("NO", await command.ExecuteScalarAsync());
+
         command.CommandText = """
             SELECT data_type
             FROM information_schema.columns
