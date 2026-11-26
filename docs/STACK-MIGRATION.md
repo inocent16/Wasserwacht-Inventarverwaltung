@@ -54,6 +54,10 @@ Einfache Stammdatenabfragen und -änderungen können über den Supabase Data API
 
 Alle bestehenden Festlegungen bleiben gültig: Mengen in ganzen Stückzahlen, keine automatisch angelegten Standorte, optionale Ablaufdaten/Chargen/Hersteller, genau eine zentrale AuditLog-Tabelle, genau ein vollständiger AuditLog-Eintrag pro erfolgreicher fachlicher Aktion, keine StockMovement-Tabelle und transaktionale Bestandsänderungen.
 
+## Authentifizierung
+
+Der Login verwendet E-Mail-Adresse und Passwort über Supabase Auth. Die Anwendung hat keine öffentliche Registrierung. Die Migration `20261126233000_profiles_and_admin_role.sql` erstellt Profile mit zunächst `role = NULL`; nur explizit freigeschaltete Administratoren erhalten Anwendungszugriff. Das erste Konto wird manuell im Supabase-Dashboard erstellt und anschließend einmalig über den SQL-Editor freigeschaltet. Weitere Benutzer werden später über einen geschützten serverseitigen Admin-Einladungsprozess angelegt.
+
 ## Noch nicht umgesetzt
 - Supabase-Cloud-Projekt und Region
 - Datenbankschema, RLS und SQL-Migrationen
