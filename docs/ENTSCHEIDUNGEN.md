@@ -19,3 +19,7 @@ Das Backend-Grundmodell enthält Artikel, Standorte, Materialposten und Material
 ## Initialer Standort
 
 Es wird beim ersten Start kein Standort automatisch angelegt. Standorte werden durch die Anwender selbst erstellt. Es gibt keinen technisch fest vorgegebenen Standort namens „Lager“.
+
+## Materialposten bei vollständiger Entnahme
+
+Wird die Menge eines Materialpostens vollständig entnommen, wird der Materialposten gelöscht, statt mit Menge 0 bestehen zu bleiben. Die dazugehörige Bewegungshistorie bleibt unabhängig davon dauerhaft erhalten. Die Löschung des aktuellen Bestandsdatensatzes darf daher niemals die historischen Bewegungsdaten löschen.
