@@ -57,16 +57,18 @@ Noch zu präzisieren: Verhalten bei fehlender Charge auf einer Seite und Bedeutu
 
 ### Vollständige Entnahme
 
-Wenn die Menge vollständig entnommen wird, wird der Materialposten gelöscht. Der zugehörige historische Bewegungs-/Auditdatensatz bleibt erhalten. Historische Einträge dürfen nicht per Fremdschlüssel-Kaskade mit dem Materialposten gelöscht werden.
+Wenn die Menge vollständig entnommen wird, wird der Materialposten gelöscht. Die zugehörigen Auditlog-Einträge bleiben erhalten. Historische Einträge dürfen nicht per Fremdschlüssel-Kaskade mit dem Materialposten gelöscht werden.
 
-## Materialbewegungen
+## Auditlog und Materialbewegungen
 
-Kernvorgänge:
+Es gibt genau ein zentrales Auditlog für Änderungen in allen Anwendungsbereichen. Eine separate Materialbewegungstabelle ist nicht vorgesehen.
+
+Das Auditlog protokolliert unter anderem die fachlichen Vorgänge:
 - Zugang: Material an einem Standort hinzufügen
 - Verschiebung: eine Menge von einem Standort zu einem anderen bewegen
 - Sammelentnahme: mehrere Positionen aus einem Standort in einem Vorgang entnehmen
 
-Jede Bestandsänderung muss nachvollziehbar protokolliert werden. Eine Sammelentnahme muss als fachlich zusammengehöriger Vorgang erkennbar sein.
+Die Bewegungshistorie wird aus den entsprechenden Auditlog-Einträgen dargestellt. Eine Sammelentnahme muss als fachlich zusammengehöriger Vorgang erkennbar sein. Das konkrete Auditlog-Datenformat und die Zuordnung zusammengehöriger Einträge sind vor der Implementierung festzulegen.
 
 ## Sollbestand
 
