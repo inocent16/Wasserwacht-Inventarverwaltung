@@ -57,10 +57,10 @@ Das Projekt wurde frisch angelegt. Es enthielt vor dem Setup keine Tabellen oder
 ## Implementierter Datenbankstand
 
 Migrationen:
-- `20261126233000_profiles_and_admin_role.sql`
-- `20261126235000_inventory_schema_and_rls.sql`
-- `20261127000000_inventory_write_functions.sql`
-- `20261127000500_restrict_service_role_inventory_access.sql`
+- `20261126231613_profiles_and_admin_role.sql`
+- `20261126231614_inventory_schema_and_rls.sql`
+- `20261126231616_inventory_write_functions.sql`
+- `20261126231618_restrict_service_role_inventory_access.sql`
 
 Tabellen:
 - `profiles`
