@@ -33,8 +33,9 @@ dotnet test tests/Wasserwacht.Api.Tests/Wasserwacht.Api.Tests.csproj --no-restor
 
 - Alle Mengen sind positive ganze Zahlen in Stück.
 - Materialposten mit Menge 0 existieren nicht; bei vollständiger Entnahme wird der Posten gelöscht.
-- Das zentrale Auditlog ist die einzige Historienquelle; historische Einträge bleiben unabhängig vom Lebenszyklus des Materialpostens erhalten.
-- Bestandsänderungen und zugehörige Auditlog-Einträge müssen gemeinsam transaktional gespeichert werden.
+- Es gibt genau eine zentrale `AuditLog`-Tabelle als einzige Historienquelle; eine `StockMovement`-Tabelle oder separate Bewegungshistorie gibt es nicht.
+- Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Auditlog-Eintrag mit den vollständigen Vorher- und Nachher-Zuständen aller betroffenen Daten.
+- Die fachliche Aktion und dieser eine Auditlog-Eintrag müssen gemeinsam transaktional gespeichert werden; der Auditlog-Eintrag bleibt unabhängig vom Lebenszyklus aktueller Datensätze erhalten.
 - Version 1.0 benötigt persönliche Benutzerkonten und Anmeldung. Zum Start gibt es ausschließlich die Rolle Administrator.
 - Der Browser darf Bestände nicht direkt überschreiben; Änderungen laufen über Bewegungsservices.
 
