@@ -92,7 +92,7 @@ Beispiel Sammelentnahme:
 - Ungültige Anfragen liefern strukturierte 400-Fehler.
 - Nicht gefundene IDs liefern 404.
 - Nicht ausreichender Bestand liefert 409 Conflict.
-- Alle Änderungen einer Bewegung und deren Historieneintrag werden in einer Transaktion gespeichert.
+- Alle Bestandsänderungen einer fachlichen Aktion und genau ein dazugehöriger Auditlog-Eintrag werden in derselben Transaktion gespeichert. Es gibt genau eine Auditlog-Tabelle und keine separate Materialbewegungstabelle.
 - Der Server berechnet und prüft Bestände; Clientwerte sind nicht vertrauenswürdig.
 
 Die endgültigen DTOs, Fehlerstruktur, Sortierung und Pagination sind bei der Implementierung in OpenAPI festzuhalten.
