@@ -7,7 +7,7 @@ returns uuid
 language plpgsql
 stable
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_user_id uuid;
@@ -34,7 +34,7 @@ create or replace function public.write_audit_log(
 returns uuid
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_actor_id uuid;
@@ -91,7 +91,7 @@ create or replace function public.create_article(
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_article public.articles%rowtype;
@@ -134,7 +134,7 @@ create or replace function public.update_article(
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_before public.articles%rowtype;
@@ -181,7 +181,7 @@ create or replace function public.delete_article(p_article_id uuid)
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_before public.articles%rowtype;
@@ -226,7 +226,7 @@ create or replace function public.create_location(
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_location public.locations%rowtype;
@@ -260,7 +260,7 @@ create or replace function public.update_location(
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_before public.locations%rowtype;
@@ -303,7 +303,7 @@ create or replace function public.delete_location(p_location_id uuid)
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_before public.locations%rowtype;
@@ -385,7 +385,7 @@ create or replace function public.receive_stock(
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_batch text := nullif(btrim(p_batch_number), '');
@@ -477,7 +477,7 @@ create or replace function public.transfer_stock(
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_source public.stock_items%rowtype;
@@ -646,7 +646,7 @@ create or replace function public.remove_stock_batch(
 returns jsonb
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth, pg_temp
+set search_path = ''
 as $$
 declare
   v_request record;
