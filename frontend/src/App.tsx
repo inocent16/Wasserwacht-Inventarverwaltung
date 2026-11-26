@@ -1,4 +1,5 @@
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { FormEvent } from "react";
 
 type User = { id: string; userName: string; displayName: string; role: string };
 type CsrfResponse = { requestToken: string };
