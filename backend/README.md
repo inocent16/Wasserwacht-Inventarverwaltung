@@ -17,11 +17,11 @@ dotnet build
 dotnet run
 ```
 
-Es existieren derzeit noch keine Migrationen, keine fachlichen API-Endpunkte und keine Tests. Die Anwendung legt das Datenbankschema nicht automatisch an.
+Es existieren derzeit noch keine Migrationen und keine fachlichen API-Endpunkte. Die Anwendung legt das Datenbankschema nicht automatisch an.
 
 ## Tests
 
-Die Modelltests liegen unter `tests/Wasserwacht.Api.Tests`. Sie prüfen bestätigte Datenregeln direkt am EF-Core-Modell, ohne eine laufende PostgreSQL-Instanz zu benötigen.
+Die Tests liegen unter `tests/Wasserwacht.Api.Tests`. Sie prüfen bestätigte Datenregeln, die zentrale AuditLog-Tabelle, den Schreibdienst und den Schutz gegen nachträgliches Ändern/Löschen. Die aktuellen Modell- und Diensttests benötigen keine laufende PostgreSQL-Instanz.
 
 ```bash
 cd backend
@@ -35,7 +35,9 @@ dotnet test tests/Wasserwacht.Api.Tests/Wasserwacht.Api.Tests.csproj --no-restor
 - Materialposten mit Menge 0 existieren nicht; bei vollständiger Entnahme wird der Posten gelöscht.
 - Es gibt genau eine zentrale `AuditLog`-Tabelle als einzige Historienquelle; eine `StockMovement`-Tabelle oder separate Bewegungshistorie gibt es nicht.
 - Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Auditlog-Eintrag mit den vollständigen Vorher- und Nachher-Zuständen aller betroffenen Daten.
-- Die fachliche Aktion und dieser eine Auditlog-Eintrag müssen gemeinsam transaktional gespeichert werden; der Auditlog-Eintrag bleibt unabhängig vom Lebenszyklus aktueller Datensätze erhalten.
+- `AuditLogWriter` hängt genau einen Eintrag für die gesamte Aktion an den gemeinsamen `InventoryDbContext` an und ruft selbst kein `SaveChanges` auf.
+- Der fachliche Anwendungscode speichert die Bestandsänderungen und diesen einen Auditlog-Eintrag gemeinsam mit demselben `SaveChanges`. Bei mehreren Speichervorgängen innerhalb einer Aktion ist eine explizite Datenbanktransaktion erforderlich.
+- Auditlog-Einträge sind im `InventoryDbContext` gegen nachträgliches Ändern und Löschen geschützt und bleiben unabhängig vom Lebenszyklus aktueller Datensätze erhalten.
 - Version 1.0 benötigt persönliche Benutzerkonten und Anmeldung. Zum Start gibt es ausschließlich die Rolle Administrator.
 - Der Browser darf Bestände nicht direkt überschreiben; Änderungen laufen über Bewegungsservices.
 
