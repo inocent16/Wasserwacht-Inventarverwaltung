@@ -1,34 +1,40 @@
 # Frontend
 
-React- und TypeScript-Webclient mit Vite. Die erste Oberfläche stellt die Administrator-Anmeldung bereit und kommuniziert mit der ASP.NET-Core-API.
+SolidJS-Frontend auf Basis von TanStack Start, TanStack Router und TanStack Query. Supabase Cloud stellt PostgreSQL und Auth bereit.
+
+## Voraussetzungen
+- Node.js 22 oder neuer
+- npm
+- Zugriff auf das Supabase-Projekt `wasserwacht-inventarverwaltung`
 
 ## Lokal starten
+1. `.env.example` nach `.env.local` kopieren (die Datei enthält die öffentliche Konfiguration des Projekt-Backends).
+2. Bei Bedarf `VITE_SUPABASE_URL` und `VITE_SUPABASE_PUBLISHABLE_KEY` aus dem Supabase-Projekt aktualisieren.
+3. Abhängigkeiten installieren und den Entwicklungsserver starten:
 
-Voraussetzungen: Node.js 22 oder neuer sowie ein laufendes Backend mit PostgreSQL-Konfiguration.
-
-1. Backend mit HTTPS starten (Standardziel des Vite-Proxys: `https://localhost:7001`).
-2. Optional `.env.example` nach `.env.local` kopieren und `WASSERWACHT_API_TARGET` anpassen.
-3. Abhängigkeiten installieren und Entwicklungsserver starten:
-
-```bash
+~~~bash
 npm install
 npm run dev
-```
+~~~
 
-Vite stellt die Oberfläche standardmäßig unter `http://localhost:5173` bereit und leitet `/api` sowie `/health` an das Backend weiter. Für die lokale Entwicklung muss das ASP.NET-HTTPS-Entwicklungszertifikat vom System als vertrauenswürdig erkannt werden; der Proxy akzeptiert das lokale Zertifikat.
+Die Anwendung läuft unter http://localhost:3000. Die Supabase-Clients werden erst bei ihrer Verwendung erzeugt.
 
-## Anmeldung
+## Technologie
+- SolidJS 1.9 (stabile Kompatibilitätsbasis für TanStack Start 1.x)
+- TanStack Start und TanStack Router
+- TanStack Query für Server-State
+- Supabase JS und `@supabase/ssr` für Supabase- und Cookie-Session-Integration
+- TypeScript und Zod
+- Generierte Cloud-Datenbanktypen unter `src/lib/supabase/database.types.ts`
 
-- Holt vor zustandsändernden Anfragen ein Antiforgery-Token über `GET /api/v1/auth/csrf`.
-- Sendet das Token im Header `X-CSRF-TOKEN`; Session-Cookie bleibt HttpOnly und wird nicht aus JavaScript gelesen.
-- Prüft den angemeldeten Benutzer über `GET /api/v1/auth/me`.
-- Unterstützt Anmeldung und Abmeldung über die Auth-API.
-- Das Frontend speichert weder Passwort noch Session-Cookie selbst.
+## Sicherheit
+- Nur die Supabase Project URL und der Publishable Key dürfen im Browser verfügbar sein.
+- Keine Secret- oder Service-Role-Keys mit einem `VITE_`-Präfix versehen oder ins Frontend geben.
+- Private Serverzugriffe gehören in Server Functions oder Server Routes.
+- Authentifizierte Datenbanktabellen erhalten Row Level Security (RLS).
+- Serverseitige Authentifizierung muss den Benutzer mit `auth.getUser()` verifizieren; ein ungeprüfter `getSession()`-Wert ist keine Autorisierungsentscheidung.
 
-Die Oberfläche ist derzeit bewusst auf die Anmeldung und einen geschützten Platzhalter nach dem Login begrenzt. Artikel, Standorte, Bestände und Bewegungsaktionen werden in den nächsten Schritten ergänzt. Fachliche Bestandslogik bleibt ausschließlich im Backend.
+## Aktueller Umfang
+Das TanStack-Start-Grundgerüst, E-Mail-/Passwort-Login-UI, Logout und Session-Prüfung sind vorhanden. Die Supabase-Clients sind request-/browser-spezifisch und anhand des Cloud-Schemas typisiert. Geschützte Navigation, Admin-Einladung, Inventaroberfläche und End-to-End-Tests stehen noch aus.
 
-## Build
-
-```bash
-npm run build
-```
+Die Cloud-Self-Signup-Einstellung muss vor dem ersten Benutzer manuell deaktiviert werden: Supabase Dashboard → Authentication → General Configuration → **Allow new users to sign up**.

@@ -1,98 +1,99 @@
-# API-Kontrakt – Vorschlag für Version 1
+# Supabase API-/RPC-Kontrakt
 
-Status: Entwurf für die Implementierung, noch nicht durch OpenAPI bestätigt.
+Stand: 26.11.2026
 
-Basispräfix: `/api/v1`
+Die Anwendung verwendet die Supabase Data API mit RLS. Direkte Tabellenänderungen sind für `anon` und `authenticated` entzogen. Alle fachlichen Schreibvorgänge laufen über die auditierten PostgreSQL-RPCs.
 
-Die API ist die fachliche Grenze zwischen Webclient und Backend. Bestandsänderungen erfolgen ausschließlich über Bewegungsendpunkte, nicht über direkte Mengenänderungen an Materialposten.
+## Tabellenzugriff
 
-## Anmeldung und Berechtigungen
+Authentifizierte Administratoren können lesen:
+- `articles`
+- `locations`
+- `stock_items`
+- `audit_log`
 
-- Die Anmeldung mit persönlichen Konten ist für Version 1.0 verpflichtend.
-- Jeder reguläre API-Zugriff auf fachliche Daten erfordert eine Anmeldung.
-- Zum Start existiert ausschließlich die Rolle `Administrator`; jedes angelegte Konto erhält diese Rolle.
-- Konten werden ausschließlich durch einen angemeldeten Administrator angelegt; eine öffentliche Selbstregistrierung ist nicht vorgesehen.
-- Jede fachliche Änderung muss dem angemeldeten Konto zugeordnet und im zentralen Auditlog protokolliert werden.
-- Konkrete Authentifizierungstechnik, Sitzungs-/Token-Verfahren und Endpunktnamen für Anmeldung und Kontenverwaltung werden vor der Implementierung festgelegt.
+`profiles` ist für den eigenen Benutzer und Administratoren lesbar. Nutzer ohne Rolle (`role = NULL`) können sich authentifizieren, erhalten aber keinen Inventarzugriff.
 
 ## Artikel
 
-- `GET /api/v1/articles` – Artikelliste
-- `POST /api/v1/articles` – Artikel anlegen
-- `GET /api/v1/articles/{articleId}` – Artikeldetails
-- `PUT /api/v1/articles/{articleId}` – Artikel ändern
-- `DELETE /api/v1/articles/{articleId}` – Löschen nur, wenn keine abhängigen Bestände oder Historieneinträge entgegenstehen; endgültige Regel noch festzulegen
+Lesezugriffe erfolgen über `public.articles`.
 
-Beispiel Anlegen:
-```json
-{
-  "name": "NaCl 500 ml",
-  "category": "Infusion",
-  "description": null,
-  "manufacturer": null
-}
-```
+| RPC | Parameter | Ergebnis |
+| --- | --- | --- |
+| `create_article` | `p_name text, p_category text, p_description text = null, p_manufacturer text = null` | Artikel-JSON |
+| `update_article` | `p_article_id uuid, p_name text, p_category text, p_description text = null, p_manufacturer text = null` | aktualisierter Artikel |
+| `delete_article` | `p_article_id uuid` | `{ deleted, id }` |
+
+Löschen ist nur möglich, wenn keine aktuellen Materialposten vorhanden sind. Historische Snapshots bleiben erhalten.
 
 ## Standorte
 
-- `GET /api/v1/locations`
-- `POST /api/v1/locations`
-- `GET /api/v1/locations/{locationId}`
-- `PUT /api/v1/locations/{locationId}`
-- `DELETE /api/v1/locations/{locationId}`
+Lesezugriffe erfolgen über `public.locations`.
 
-Es wird kein Standort automatisch erzeugt. Löschregeln für Standorte mit Beständen oder Historieneinträgen sind noch festzulegen.
+| RPC | Parameter | Ergebnis |
+| --- | --- | --- |
+| `create_location` | `p_name text, p_description text = null` | Standort-JSON |
+| `update_location` | `p_location_id uuid, p_name text, p_description text = null` | aktualisierter Standort |
+| `delete_location` | `p_location_id uuid` | `{ deleted, id }` |
+
+Löschen ist nur möglich, wenn keine aktuellen Materialposten vorhanden sind.
 
 ## Bestände
 
-- `GET /api/v1/stock-items?locationId={id}` – aktuelle Materialposten, optional nach Standort gefiltert
-- `GET /api/v1/stock-items/{stockItemId}` – einzelner aktueller Materialposten
+Lesezugriffe erfolgen über `public.stock_items`, optional gefiltert nach `location_id`.
 
-Es gibt bewusst keinen allgemeinen Endpunkt zum direkten Überschreiben einer Menge.
+Es gibt keinen direkten Endpunkt zum Überschreiben einer Menge.
 
-## Bewegungen
+### Zugang – `receive_stock`
 
-- `POST /api/v1/movements/incoming` – Zugang
-- `POST /api/v1/movements/transfer` – Verschiebung
-- `POST /api/v1/movements/removal-batch` – Sammelentnahme
-- `GET /api/v1/movements` – Historie, Filter und Pagination sind zu spezifizieren
+Parameter:
+- `p_article_id uuid`
+- `p_location_id uuid`
+- `p_quantity integer` (positive ganze Zahl)
+- `p_expiration_date date = null`
+- `p_batch_number text = null`
+- `p_manufacturer text = null`
+- `p_note text = null`
 
-Beispiel Zugang:
-```json
-{
-  "articleId": "00000000-0000-0000-0000-000000000001",
-  "locationId": "00000000-0000-0000-0000-000000000002",
-  "quantity": 12,
-  "expirationDate": "2028-06-01",
-  "batchNumber": "CH-123",
-  "manufacturer": null,
-  "note": null
-}
-```
+Erhöht einen exakt passenden Materialposten oder legt einen neuen an. Ergebnis enthält `stock_item` und `created`.
 
-Beispiel Sammelentnahme:
-```json
-{
-  "sourceLocationId": "00000000-0000-0000-0000-000000000002",
-  "items": [
-    {
-      "stockItemId": "00000000-0000-0000-0000-000000000003",
-      "quantity": 2
-    }
-  ],
-  "note": "Materialverbrauch"
-}
-```
+### Verschiebung – `transfer_stock`
 
-## Allgemeine Regeln
+Parameter:
+- `p_stock_item_id uuid`
+- `p_target_location_id uuid`
+- `p_quantity integer` (positive ganze Zahl)
+- `p_note text = null`
 
-- IDs sind UUIDs.
-- Mengen sind positive Ganzzahlen in Stück.
-- Datumswerte für Ablaufdaten sind ISO-8601-Datum (`YYYY-MM-DD`), ohne Uhrzeit.
-- Ungültige Anfragen liefern strukturierte 400-Fehler.
-- Nicht gefundene IDs liefern 404.
-- Nicht ausreichender Bestand liefert 409 Conflict.
-- Alle Bestandsänderungen einer fachlichen Aktion und genau ein dazugehöriger Auditlog-Eintrag werden in derselben Transaktion gespeichert. Es gibt genau eine Auditlog-Tabelle und keine separate Materialbewegungstabelle.
-- Der Server berechnet und prüft Bestände; Clientwerte sind nicht vertrauenswürdig.
+Reduziert oder löscht den Quellposten und erhöht/legt den exakt passenden Zielposten an. Quelle und Ziel werden in einem AuditLog-Eintrag zusammengefasst.
 
-Die endgültigen DTOs, Fehlerstruktur, Sortierung und Pagination sind bei der Implementierung in OpenAPI festzuhalten.
+### Sammelentnahme – `remove_stock_batch`
+
+Parameter:
+- `p_source_location_id uuid`
+- `p_items jsonb`
+- `p_note text = null`
+
+`p_items` ist ein nicht-leeres Array konkreter Materialposten und Mengen:
+
+~~~json
+[
+  { "stockItemId": "00000000-0000-0000-0000-000000000003", "quantity": 2 }
+]
+~~~
+
+Jede UUID muss zum Quellstandort gehören. Doppelte Positionen und Mengen größer als der verfügbare Bestand werden abgelehnt. Ein vollständig entnommener Posten wird gelöscht. Die gesamte Aktion erzeugt einen AuditLog-Eintrag.
+
+## Zusammenführung und Identität
+
+Die aktuelle technische Ausgangsregel verlangt exakte Übereinstimmung aller Identitätsmerkmale: Artikel, Zielstandort, Ablaufdatum, Charge und Hersteller. NULL und bekannte Werte gelten als verschieden. Diese konservative Regel verhindert ungewollte Vermischung, bis die offenen fachlichen Fragen endgültig bestätigt wurden.
+
+## Sicherheit und Transaktionsverhalten
+
+- Jede Schreib-RPC prüft selbst die Datenbankrolle `administrator`.
+- SECURITY DEFINER-Funktionen verwenden `search_path = ''`, qualifizierte Objektnamen und explizite EXECUTE-Rechte.
+- Die Datenbank schreibt pro erfolgreicher Schreib-RPC genau einen AuditLog-Eintrag.
+- Die fachliche Mutation und AuditLog-INSERT laufen in derselben PostgreSQL-Transaktion; ein Fehler rollt beides zurück.
+- Es gibt genau eine Tabelle `audit_log`, keine `stock_movements`-Tabelle.
+
+Fehler werden als PostgreSQL-/PostgREST-Fehler zurückgegeben. Die UI muss SQLSTATEs auf verständliche Meldungen abbilden (z. B. `42501` Berechtigung, `P0002` nicht gefunden, `22023` ungültige Eingabe, `23503` abhängige Bestände).

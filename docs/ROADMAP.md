@@ -1,50 +1,61 @@
 # Entwicklungsroadmap
 
-## Phase 0 – Übergabefähigkeit und Architektur
-- [x] Anforderungen und Entscheidungen dokumentieren
-- [x] offenen Klärungsbedarf zentral erfassen
-- [ ] widersprüchliche Altdokumentation vollständig bereinigen
-- [ ] Architekturentscheidungen zu Historie und Merge-Regeln treffen
+## Phase 0 – Anforderungen und Architektur
+- [x] Fachliche Anforderungen und Entscheidungen dokumentieren
+- [x] zentrale AuditLog-Regeln festlegen
+- [x] Zielarchitektur SolidJS + TanStack + Supabase Cloud festlegen
+- [x] React-Frontend durch Solid-/TanStack-Grundgerüst ersetzen
+- [x] Supabase Browser- und Server-Client vorbereiten
+- [x] E-Mail-/Passwort-Login und Session-Prüfung vorbereiten
+- [x] Supabase CLI-Konfiguration und lokale Signup-Deaktivierung festlegen
 
-## Phase 1 – Backend-Grundlage
-- [ ] Solution- und Projektstruktur vervollständigen
-- [ ] Konfiguration und Dependency Injection sauber strukturieren
-- [ ] PostgreSQL-Migrationen einrichten
-- [ ] Health-/Readiness-Prüfung ergänzen
-- [ ] einheitliche Fehlerantworten und Validierung
-- [x] Testprojekt und CI-Build einrichten (Build erfolgreich; 13 Tests bestanden)
-- [ ] Authentifizierungsverfahren und sichere erstmalige Einrichtung des ersten Administratorkontos festlegen
-- [ ] Anmeldung mit persönlichen Konten und ausschließlich der Rolle `Administrator` implementieren
-- [x] Zentrale `AuditLog`-Entität und EF-Core-Tabellenmodell anlegen (genau eine Zeile je erfolgreicher Aktion)
-- [x] Zentralen Auditlog-Schreibdienst implementieren und registrieren (ein Eintrag je Aktion; kein separates Speichern)
-- [x] Auditlog-Einträge gegen nachträgliches Ändern und Löschen schützen
-- [x] Initialmigration für Artikel, Standorte, Materialposten und die einzige zentrale AuditLog-Tabelle erstellen
-- [x] EF-Core-Designzeitfactory und CI-Prüfung auf ausstehende Modelländerungen ergänzen
-- [x] Migration in CI gegen einen kurzlebigen PostgreSQL-17-Dienst anwenden und Schema/JSONB/einzige AuditLog-Tabelle prüfen
-- [ ] Auditlog in alle fachlichen Schreibservices integrieren; Änderung und Eintrag gemeinsam transaktional speichern
+## Phase 1 – Supabase-Grundlage
+- [x] Profile-/Rollenmodell für Administratoren definieren
+- [x] Artikel-, Standort-, Materialposten- und AuditLog-Tabellen erstellen
+- [x] RLS für die Anwendungstabellen umsetzen
+- [x] Direkte Tabellen-DML-Rechte für API-Rollen entziehen
+- [x] Supabase-CLI und pgTAP-CI einrichten
+- [x] Migrationen auf frischer lokaler Supabase-Instanz in GitHub Actions anwenden
+- [x] Schema-, RLS- und Auth-Rollen-Tests erfolgreich in CI ausführen
+- [x] Supabase-Cloud-Projekt in Frankfurt anlegen
+- [x] Vier Migrationen auf Cloud-PostgreSQL anwenden
+- [x] Cloud-Schema, RLS und Rollenrechte prüfen
+- [x] TypeScript-Datenbanktypen aus Cloud-Schema generieren
+- [ ] Cloud-Self-Signup im Dashboard deaktivieren und verifizieren
+- [ ] Erstes Administratorkonto anlegen und Rolle freischalten
+- [ ] Admin-Einladungsfunktion und Passwort-Reset implementieren
 
-## Phase 2 – Stammdaten
-- [ ] Artikel CRUD
-- [ ] Kategorien-Freitext und Vorschläge aus existierenden Kategorien
-- [ ] Standort CRUD
-- [ ] Regeln für Löschen/Archivieren umsetzen, nachdem entschieden
+## Phase 2 – AuditLog und Bestandslogik
+- [x] genau eine zentrale AuditLog-Tabelle umsetzen
+- [x] AuditLog gegen nachträgliches Ändern und Löschen schützen
+- [x] Artikel- und Standort-CRUD über auditiertes RPC
+- [x] transaktionaler Zugang mit konservativer Merge-Identität
+- [x] transaktionale Verschiebung mit atomarer Quell-/Zieländerung
+- [x] transaktionale Sammelentnahme konkreter Materialposten
+- [x] Posten bei Menge 0 löschen
+- [x] Concurrency-Sperren und Datenbank-Constraints ergänzen
+- [x] pgTAP-Tests für Bestandsabläufe, AuditLog-Anzahl und Rollback erfolgreich ausführen
+- [ ] echte parallele Concurrency-/Race-Integrationstests ergänzen
+- [ ] fachliche Merge-/Löschregeln final bestätigen
 
-## Phase 3 – Bestände und Bewegungen
-- [ ] Bestandsabfragen
-- [ ] Zugang mit Zusammenführung passender Posten
-- [ ] Verschiebung mit atomarer Quell-/Zieländerung
-- [ ] Sammelentnahme als atomarer Vorgang
-- [ ] Posten bei Menge 0 löschen
-- [ ] Historie unabhängig vom aktuellen Materialposten erhalten
-- [ ] Concurrency- und Integritätstests
-
-## Phase 4 – Weboberfläche
-- [ ] React + TypeScript Projekt
+## Phase 3 – Weboberfläche
+- [x] SolidJS + TanStack Start-Grundgerüst
+- [x] E-Mail-/Passwort-Login-UI
+- [ ] geschützte Anwendungsnavigation
 - [ ] Artikelverwaltung
 - [ ] Standortverwaltung
 - [ ] Bestandsübersicht je Standort
 - [ ] Dialog für Zugang, Verschiebung und Sammelentnahme
 - [ ] Historienansicht
+- [ ] TanStack Table, Filter und Pagination integrieren
+
+## Phase 4 – Qualität und Bereitstellung
+- [x] RLS-Sicherheitstests mit anon/authenticated/admin
+- [x] Cloud-Rechteprüfung (RLS, service_role und RPC-EXECUTE)
+- [ ] End-to-End-Tests
+- [ ] Backup-/Restore-Test
+- [ ] Hosting und Deployment dokumentieren
+- [ ] Abnahme mit realistischen Beispieldaten
 
 ## Phase 5 – Optionale Funktionen
 Nur nach eigenständiger Priorisierung:
@@ -54,13 +65,6 @@ Nur nach eigenständiger Priorisierung:
 - [ ] Verplombung pro Standort
 - [ ] regelmäßige Kontrollen pro Standort
 - [ ] Nachfüllhinweise und Bestellkennzeichnung
-- [ ] Backup und Wiederherstellung
 
-## Phase 6 – Qualität und Bereitstellung
-- [ ] End-to-End-Tests
-- [ ] Backup-/Restore-Test
-- [ ] Installations- und Betriebsdokumentation
-- [ ] Abnahme mit realistischen Beispieldaten
-
-## Phase 7 – Mobile Anwendung
-Erst beginnen, wenn die Webanwendung stabil und fachlich vollständig ist. Gleicher Funktionsumfang wie Webapp.
+## Phase 6 – Mobile Anwendung
+Erst beginnen, wenn die Webanwendung stabil und fachlich vollständig ist. Gleicher fachlicher Funktionsumfang wie Webapp.

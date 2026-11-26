@@ -1,40 +1,106 @@
 :root {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #193448;
-  background: #f2f6f8;
+  color: #152b38;
+  background: #f3f6f8;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
 }
+
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; min-height: 100vh; }
+body { min-width: 320px; min-height: 100vh; margin: 0; }
 button, input { font: inherit; }
-.page { min-height: 100vh; display: flex; flex-direction: column; }
-.topbar { height: 82px; padding: 0 clamp(22px, 7vw, 100px); display: flex; align-items: center; gap: 14px; background: #103b56; color: white; box-shadow: 0 2px 12px #0a2d4018; }
-.brand-mark { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid #ffffff70; border-radius: 12px; font-size: 23px; font-weight: 750; }
-.brand-name { font-size: 16px; font-weight: 700; letter-spacing: .02em; }
-.brand-subtitle { color: #c3d5df; font-size: 12px; margin-top: 2px; }
-.quiet-button { margin-left: auto; color: white; border: 1px solid #ffffff70; background: transparent; border-radius: 8px; padding: 9px 15px; cursor: pointer; }
-.content { width: min(100% - 32px, 480px); margin: auto; padding: 64px 0; }
-.login-card, .welcome-card { background: white; border: 1px solid #e1e9ed; border-radius: 16px; padding: clamp(26px, 6vw, 42px); box-shadow: 0 18px 50px #123b5510; }
-.eyebrow { color: #14749a; font-size: 11px; font-weight: 800; letter-spacing: .13em; }
-h1 { margin: 12px 0 8px; font-size: clamp(27px, 5vw, 34px); letter-spacing: -.04em; color: #15384e; }
-.intro, .welcome-card > p { color: #617582; line-height: 1.6; margin: 0 0 28px; font-size: 14px; }
-label { display: block; margin: 20px 0 8px; font-size: 13px; font-weight: 650; color: #29485b; }
-input { width: 100%; height: 46px; padding: 0 13px; border: 1px solid #ccd9df; border-radius: 8px; color: #193448; background: #fff; outline: none; }
-input:focus { border-color: #1682a8; box-shadow: 0 0 0 3px #1682a81c; }
-.primary-button { width: 100%; margin-top: 26px; height: 48px; border: 0; border-radius: 8px; background: #126487; color: white; font-weight: 700; cursor: pointer; }
-.primary-button:hover:not(:disabled) { background: #0c526f; }
-button:disabled { opacity: .55; cursor: not-allowed; }
-.security-note { margin-top: 20px; color: #738792; text-align: center; font-size: 11px; }
-.security-note span { color: #1b9874; font-size: 9px; margin-right: 6px; }
-.error { margin-top: 18px; padding: 11px 12px; border-radius: 8px; background: #fff1ef; color: #a33d32; font-size: 13px; line-height: 1.45; }
-.welcome-card h1 { font-size: 28px; }
-.session-detail { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #edf1f3; padding: 14px 0; font-size: 13px; }
-.session-detail span { color: #71838d; }
-.session-detail strong { color: #26485b; }
-.welcome-card .next-step { margin: 16px 0 0; padding: 13px; background: #f1f7f9; border-radius: 8px; font-size: 12px; }
-.connection-hint { color: #748690; font-size: 12px; text-align: center; }
-.loading { color: #617582; font-size: 14px; }
-footer { padding: 22px; text-align: center; color: #8798a1; font-size: 11px; }
-@media (max-width: 480px) { .topbar { height: 72px; } .content { padding: 36px 0; } }
+.page { display: flex; min-height: 100vh; flex-direction: column; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px clamp(20px, 5vw, 64px);
+  background: #123b55;
+  color: #fff;
+}
+
+.brand-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 34%);
+  border-radius: 12px;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.brand-name { font-size: 16px; font-weight: 750; letter-spacing: .01em; }
+.brand-subtitle { margin-top: 2px; color: rgb(255 255 255 / 72%); font-size: 12px; }
+.quiet-button { margin-left: auto; border: 0; background: transparent; color: #fff; cursor: pointer; }
+.quiet-button:disabled { opacity: .6; cursor: wait; }
+
+.content { display: grid; flex: 1; place-items: center; padding: 48px 20px; }
+.login-card, .welcome-card {
+  width: min(100%, 460px);
+  padding: clamp(28px, 5vw, 44px);
+  border: 1px solid #dce5ea;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgb(20 50 68 / 8%);
+}
+
+.eyebrow { color: #36728a; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+h1 { margin: 14px 0 12px; color: #123b55; font-size: clamp(26px, 4vw, 34px); line-height: 1.14; }
+p { color: #526775; line-height: 1.65; }
+.intro { margin-bottom: 28px; }
+
+label { display: block; margin: 18px 0 7px; color: #294451; font-size: 13px; font-weight: 700; }
+input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid #cbd8df;
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: #152b38;
+}
+input:focus { border-color: #36728a; box-shadow: 0 0 0 3px rgb(54 114 138 / 13%); }
+
+.primary-button {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 24px;
+  border: 0;
+  border-radius: 9px;
+  background: #123b55;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primary-button:hover:not(:disabled) { background: #1c526f; }
+.primary-button:disabled { opacity: .6; cursor: wait; }
+
+.security-note { margin-top: 18px; color: #70838d; font-size: 11px; text-align: center; }
+.security-note span { color: #32805d; }
+.error {
+  margin-top: 16px;
+  padding: 11px 12px;
+  border: 1px solid #f1caca;
+  border-radius: 8px;
+  background: #fff5f5;
+  color: #9c2e2e;
+  font-size: 13px;
+}
+.connection-hint { margin-top: 18px; font-size: 12px; text-align: center; }
+.loading { color: #526775; font-size: 14px; }
+.session-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e5ecef;
+  font-size: 13px;
+}
+.session-detail span { color: #70838d; }
+.session-detail strong { color: #294451; text-align: right; overflow-wrap: anywhere; }
+.next-step { margin-top: 22px; font-size: 13px; }
+
+footer { padding: 20px; color: #778993; font-size: 12px; text-align: center; }
