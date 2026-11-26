@@ -13,6 +13,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: wasserwacht_inventory
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d wasserwacht_inventory"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -30,4 +44,6 @@ jobs:
       - name: Build
         run: dotnet build backend/src/Wasserwacht.Api/Wasserwacht.Api.csproj --no-restore --configuration Release
       - name: Test
+        env:
+          WASSERWACHT_DB: Host=localhost;Port=5432;Database=wasserwacht_inventory;Username=ci;Password=ci
         run: dotnet test backend/tests/Wasserwacht.Api.Tests/Wasserwacht.Api.Tests.csproj --no-restore --configuration Release
