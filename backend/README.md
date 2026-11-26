@@ -1,7 +1,30 @@
 # Backend
 
-Geplantes Backend: ASP.NET Core Web API mit C# und PostgreSQL.
+ASP.NET Core Web API mit C# und PostgreSQL (EF Core / Npgsql).
 
-Der erste Implementierungsschritt ist das Kern-Datenmodell für Artikel, Standorte und Materialposten sowie die Services für Zugänge, Verschiebungen und Sammelentnahmen.
+## Projekt
 
-Noch kein produktiver Code vorhanden.
+`src/Wasserwacht.Api` ist das API-Projekt. Das aktuelle Grundgerüst enthält Domainklassen, `InventoryDbContext`, PostgreSQL-Konfiguration, OpenAPI im Development-Modus und `GET /health`.
+
+## Lokaler Start
+
+Voraussetzungen: .NET 10 SDK und PostgreSQL. Datenbank `wasserwacht_inventory` anlegen und `WASSERWACHT_DB` oder `ConnectionStrings:Inventory` konfigurieren.
+
+```bash
+cd src/Wasserwacht.Api
+dotnet restore
+dotnet build
+dotnet run
+```
+
+Es existieren derzeit noch keine Migrationen, keine fachlichen API-Endpunkte und keine Tests. Die Anwendung legt das Datenbankschema nicht automatisch an.
+
+## Fachliche Regeln
+
+- Alle Mengen sind positive ganze Zahlen in Stück.
+- Materialposten mit Menge 0 existieren nicht; bei vollständiger Entnahme wird der Posten gelöscht.
+- Historische Bewegungsinformationen bleiben erhalten und sind nicht vom Lebenszyklus des Materialpostens abhängig.
+- Bestandsänderungen und Historieneinträge müssen transaktional gespeichert werden.
+- Der Browser darf Bestände nicht direkt überschreiben; Änderungen laufen über Bewegungsservices.
+
+Siehe `../docs/ARCHITEKTUR.md`, `../docs/DOMAENENMODELL.md`, `../docs/API-KONTRAKT.md` und `../docs/OFFENE_FRAGEN.md`.
