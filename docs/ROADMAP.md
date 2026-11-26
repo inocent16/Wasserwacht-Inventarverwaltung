@@ -12,11 +12,14 @@
 - [ ] PostgreSQL-Migrationen einrichten
 - [ ] Health-/Readiness-Prüfung ergänzen
 - [ ] einheitliche Fehlerantworten und Validierung
-- [x] Testprojekt und CI-Build einrichten (Build erfolgreich; 4 Modelltests bestanden)
+- [x] Testprojekt und CI-Build einrichten (Build erfolgreich; 13 Tests bestanden)
 - [ ] Authentifizierungsverfahren und sichere erstmalige Einrichtung des ersten Administratorkontos festlegen
 - [ ] Anmeldung mit persönlichen Konten und ausschließlich der Rolle `Administrator` implementieren
 - [x] Zentrale `AuditLog`-Entität und EF-Core-Tabellenmodell anlegen (genau eine Zeile je erfolgreicher Aktion)
-- [ ] Auditlog-Schreibdienst und Datenbankmigration umsetzen; vor den ersten fachlichen Schreibendpunkten fertigstellen
+- [x] Zentralen Auditlog-Schreibdienst implementieren und registrieren (ein Eintrag je Aktion; kein separates Speichern)
+- [x] Auditlog-Einträge gegen nachträgliches Ändern und Löschen schützen
+- [ ] Datenbankmigration für die zentrale AuditLog-Tabelle erstellen und testen
+- [ ] Auditlog in alle fachlichen Schreibservices integrieren; Änderung und Eintrag gemeinsam transaktional speichern
 
 ## Phase 2 – Stammdaten
 - [ ] Artikel CRUD
