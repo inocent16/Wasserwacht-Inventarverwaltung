@@ -3,12 +3,13 @@
 ## Voraussetzungen
 - Node.js 22 oder neuer
 - npm
-- Supabase-Cloud-Projekt für Auth- und Datenbanktests
+- Docker Desktop / Docker Engine (für lokale Supabase-Datenbank und pgTAP-Tests)
+- Supabase CLI
 - Git
 
 ## Frontend starten
 1. `frontend/.env.example` nach `frontend/.env.local` kopieren.
-2. Supabase Project URL und Publishable Key aus dem Supabase-Dashboard eintragen.
+2. Project URL und Publishable Key aus dem Supabase-Dashboard oder der lokalen CLI eintragen.
 3. Im Frontend-Verzeichnis ausführen:
 
 ~~~bash
@@ -17,26 +18,58 @@ npm install
 npm run dev
 ~~~
 
-Die Anwendung ist anschließend unter http://localhost:3000 erreichbar.
+Die Anwendung läuft unter http://localhost:3000.
 
-Für reine UI-Arbeit können die Zugangsdaten zunächst leer bleiben. Sobald Supabase-Funktionen aufgerufen werden, müssen URL und Publishable Key konfiguriert sein.
+## Supabase lokal starten
+Im Repository-Root:
 
-## Supabase Cloud vorbereiten
-1. Ein Supabase-Projekt in der gewünschten EU-Region erstellen (Frankfurt ist bevorzugt, aber noch nicht festgelegt).
-2. Project URL und Publishable Key aus dem API-/Connect-Bereich übernehmen.
-3. SQL-Schemaänderungen ausschließlich als versionierte Dateien unter `supabase/migrations/` ablegen und über Supabase CLI anwenden.
-4. RLS-Policies für jede exponierte Tabelle prüfen und durch Tests absichern.
+~~~bash
+supabase start
+supabase status
+~~~
 
-Das Repository ist noch nicht mit einer konkreten Supabase-Instanz verbunden. Es gibt daher noch keine produktive Datenbank oder Zugangsdaten im Repository.
+Die lokale Startumgebung verwendet die Einstellungen aus `supabase/config.toml`. Signup ist dort global und für den E-Mail-Provider deaktiviert. `supabase start` wendet die versionierten SQL-Migrationen aus `supabase/migrations/` auf einer frischen lokalen Datenbank an.
 
-## Supabase Auth und erster Administrator
+Die Werte `API URL` und `Publishable key` aus `supabase status` in `frontend/.env.local` übernehmen:
 
-Die Anwendung verwendet E-Mail-Adresse und Passwort. Öffentliche Selbstregistrierung muss im Supabase-Dashboard unter Authentication > Sign In / Providers bzw. den Auth-URL-/Signup-Einstellungen deaktiviert werden; der E-Mail-Provider für die Anmeldung muss dabei aktiviert bleiben.
+~~~dotenv
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_PUBLISHABLE_KEY=<lokaler-publishable-key>
+~~~
 
-Nach dem Anwenden der Migration `20261126233000_profiles_and_admin_role.sql` wird das erste Konto kontrolliert angelegt:
+Lokale Datenbank zurücksetzen und alle Migrationen neu anwenden:
 
-1. Im Supabase-Dashboard unter Authentication > Users das erste Konto manuell anlegen (E-Mail und initiales Passwort; E-Mail-Bestätigung passend zur Betriebsentscheidung konfigurieren).
-2. Im SQL Editor die Profilrolle gezielt für genau diese E-Mail freischalten:
+~~~bash
+supabase db reset
+~~~
+
+pgTAP-Datenbanktests ausführen:
+
+~~~bash
+supabase test db
+~~~
+
+Die GitHub-Actions-Workflowdatei `.github/workflows/database.yml` führt dieselben Migrationen und pgTAP-Tests automatisiert in einem lokalen Supabase-Stack aus.
+
+## Supabase Cloud verbinden
+1. Ein Cloud-Projekt in der gewünschten EU-Region erstellen (Frankfurt ist bevorzugt, aber noch nicht festgelegt).
+2. Im Dashboard unter Authentication die öffentliche Registrierung deaktivieren; den E-Mail-Provider für die Anmeldung aktiviert lassen.
+3. Project URL und Publishable Key nach `frontend/.env.local` übernehmen.
+4. Projekt-Referenz und DB-Passwort nicht committen. Lokal im Repository-Root verbinden:
+
+~~~bash
+supabase login
+supabase link --project-ref <project-ref>
+supabase db push
+~~~
+
+Vor `supabase db push` Zielprojekt und Migrationen prüfen. Zugangsdaten und Projekt-Referenzen bleiben außerhalb des Git-Repositories.
+
+## Ersten Administrator anlegen
+Die Authentifizierung erfolgt mit E-Mail-Adresse und Passwort. Neue Auth-Profile werden vom Datenbanktrigger zunächst mit `role = NULL` angelegt.
+
+1. Im Supabase-Dashboard unter Authentication > Users das erste Konto manuell anlegen. Die E-Mail-Adresse muss bestätigt sein, damit die Anmeldung wie konfiguriert funktioniert.
+2. Im SQL Editor genau dieses Konto freischalten:
 
 ~~~sql
 update public.profiles p
@@ -46,23 +79,18 @@ where p.id = u.id
   and lower(u.email) = lower('erste-admin-adresse@example.org');
 ~~~
 
-3. Prüfen, dass genau eine Zeile geändert wurde. Keine öffentliche Registrierung aktivieren, um weitere Konten anzulegen.
+3. Prüfen, dass genau eine Zeile geändert wurde.
+4. Keine öffentliche Registrierung aktivieren, um weitere Konten anzulegen.
 
-Das Profil-Trigger legt neue Profile absichtlich mit `role = NULL` an. Solche Konten können sich zwar authentifizieren, erhalten aber keinen Zugriff auf die Inventarverwaltung. Die Admin-Einladungsfunktion wird später serverseitig mit einem Supabase Secret Key implementiert; dieser Schlüssel darf niemals im Browser verfügbar sein.
+Weitere Benutzer werden künftig ausschließlich über eine geschützte serverseitige Administrator-Einladungsfunktion provisioniert. Diese Funktion ist noch nicht implementiert.
 
-## Sicherheitsregeln
-- Keine echten Zugangsdaten oder API-Secrets committen.
+## Datenbankzugriff und Sicherheit
+- RLS ist für alle Anwendungstabellen aktiviert.
 - Publishable Key darf im Browser verwendet werden; er ersetzt keine RLS-Policy.
 - Service-Role-/Secret-Keys niemals mit `VITE_`-Präfix versehen.
-- Admin-API-Aufrufe dürfen nur serverseitig erfolgen.
-- Autorisierungsentscheidungen auf dem Server müssen den Benutzer gegen Supabase Auth verifizieren.
-- Authentifizierte Daten nicht in gemeinsam genutzten SSR-Caches legen.
+- Direkte Tabellen-DML-Rechte für anon/authenticated sind entzogen; fachliche Änderungen laufen über auditiertes RPC.
+- SECURITY DEFINER-Funktionen prüfen die Administratorrolle in PostgreSQL und setzen einen leeren `search_path`.
+- Keine echten Passwörter, Tokens oder Secrets committen.
 
 ## Übergangsbestand
-Das Verzeichnis `backend/` enthält das bisherige ASP.NET-Core-/EF-Core-Grundgerüst. Es bleibt während der Migration als Referenz und Regression-Baseline erhalten. Es ist nicht mehr die Zielarchitektur und wird erst gelöscht, wenn Datenbankschema, Authentifizierung, AuditLog und Inventarfunktionen auf Supabase vollständig umgesetzt und getestet sind.
-
-## Tests
-- Frontend: `npm run typecheck` und `npm run build`.
-- Datenbank: Migrationstests gegen PostgreSQL / Supabase-Testumgebung.
-- Sicherheit: RLS-Tests für anon, authenticated und Administrator.
-- Bestand: Integrationstests für Mengenvalidierung, Concurrency, Rollback und exakt einen AuditLog-Eintrag pro erfolgreicher Aktion.
+Das Verzeichnis `backend/` enthält das bisherige ASP.NET-Core-/EF-Core-Grundgerüst. Es bleibt während der Migration als Referenz erhalten und wird erst entfernt, wenn Schema, Authentifizierung, AuditLog und Inventarfunktionen auf Supabase vollständig getestet sind.
