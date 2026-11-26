@@ -15,7 +15,8 @@
 - [x] RLS für die Anwendungstabellen umsetzen
 - [x] Direkte Tabellen-DML-Rechte für API-Rollen entziehen
 - [x] Supabase-CLI und pgTAP-CI einrichten
-- [ ] Migrationen lokal gegen Docker-Supabase ausführen und CI grün bestätigen
+- [x] Migrationen auf frischer lokaler Supabase-Instanz in GitHub Actions anwenden
+- [x] Schema-, RLS- und Auth-Rollen-Tests erfolgreich in CI ausführen
 - [ ] Cloud-Projekt und Region verbindlich auswählen und anlegen
 - [ ] Cloud-Migrationen nach Review anwenden
 - [ ] Admin-Einladungsfunktion und Passwort-Reset implementieren
@@ -29,8 +30,9 @@
 - [x] transaktionale Sammelentnahme konkreter Materialposten
 - [x] Posten bei Menge 0 löschen
 - [x] Concurrency-Sperren und Datenbank-Constraints ergänzen
+- [x] pgTAP-Tests für Bestandsabläufe, AuditLog-Anzahl und Rollback erfolgreich ausführen
+- [ ] echte parallele Concurrency-/Race-Integrationstests ergänzen
 - [ ] fachliche Merge-/Löschregeln final bestätigen
-- [ ] pgTAP-Verhaltenstests für Bestand, AuditLog, Rollback und Concurrency ergänzen
 
 ## Phase 3 – Weboberfläche
 - [x] SolidJS + TanStack Start-Grundgerüst
@@ -44,8 +46,8 @@
 - [ ] TanStack Table, Filter und Pagination integrieren
 
 ## Phase 4 – Qualität und Bereitstellung
+- [x] RLS-Sicherheitstests mit anon/authenticated/admin
 - [ ] End-to-End-Tests
-- [ ] RLS-Sicherheitstests mit anon/authenticated/admin
 - [ ] Backup-/Restore-Test
 - [ ] Hosting und Deployment dokumentieren
 - [ ] Abnahme mit realistischen Beispieldaten
