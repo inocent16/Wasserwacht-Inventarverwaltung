@@ -19,6 +19,16 @@ dotnet run
 
 Es existieren derzeit noch keine Migrationen, keine fachlichen API-Endpunkte und keine Tests. Die Anwendung legt das Datenbankschema nicht automatisch an.
 
+## Tests
+
+Die Modelltests liegen unter `tests/Wasserwacht.Api.Tests`. Sie prüfen bestätigte Datenregeln direkt am EF-Core-Modell, ohne eine laufende PostgreSQL-Instanz zu benötigen.
+
+```bash
+cd backend
+dotnet restore tests/Wasserwacht.Api.Tests/Wasserwacht.Api.Tests.csproj
+dotnet test tests/Wasserwacht.Api.Tests/Wasserwacht.Api.Tests.csproj --no-restore --configuration Release
+```
+
 ## Fachliche Regeln
 
 - Alle Mengen sind positive ganze Zahlen in Stück.
