@@ -23,8 +23,9 @@ Es existieren derzeit noch keine Migrationen, keine fachlichen API-Endpunkte und
 
 - Alle Mengen sind positive ganze Zahlen in Stück.
 - Materialposten mit Menge 0 existieren nicht; bei vollständiger Entnahme wird der Posten gelöscht.
-- Historische Bewegungsinformationen bleiben erhalten und sind nicht vom Lebenszyklus des Materialpostens abhängig.
-- Bestandsänderungen und Historieneinträge müssen transaktional gespeichert werden.
+- Das zentrale Auditlog ist die einzige Historienquelle; historische Einträge bleiben unabhängig vom Lebenszyklus des Materialpostens erhalten.
+- Bestandsänderungen und zugehörige Auditlog-Einträge müssen gemeinsam transaktional gespeichert werden.
+- Version 1.0 benötigt persönliche Benutzerkonten und Anmeldung. Zum Start gibt es ausschließlich die Rolle Administrator.
 - Der Browser darf Bestände nicht direkt überschreiben; Änderungen laufen über Bewegungsservices.
 
 Siehe `../docs/ARCHITEKTUR.md`, `../docs/DOMAENENMODELL.md`, `../docs/API-KONTRAKT.md` und `../docs/OFFENE_FRAGEN.md`.
