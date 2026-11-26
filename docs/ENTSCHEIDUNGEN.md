@@ -15,3 +15,7 @@ Die Kategorie wird zunächst als Text am Artikel gespeichert. Später wird auf e
 ## Datenmodell – erster Stand
 
 Das Backend-Grundmodell enthält Artikel, Standorte, Materialposten und Materialbewegungen. Optionale Erweiterungen werden erst nach dem Kern umgesetzt.
+
+## Initialer Standort
+
+Es wird beim ersten Start kein Standort automatisch angelegt. Standorte werden durch die Anwender selbst erstellt. Es gibt keinen technisch fest vorgegebenen Standort namens „Lager“.
