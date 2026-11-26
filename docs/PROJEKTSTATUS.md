@@ -20,7 +20,8 @@ Noch nicht vorhanden:
 - Datenbankmigrationen
 - fachliche Services und Validierungen
 - CRUD- und Bewegungsendpunkte
-- Authentifizierung und Benutzerverwaltung
+- Authentifizierung und Benutzerverwaltung (für Version 1.0 verpflichtend; zunächst ausschließlich Rolle Administrator)
+- zentrales Auditlog als implementierte Historienquelle
 - React-Frontend
 - automatisierte Tests
 - Docker-/lokale Startkonfiguration
@@ -49,8 +50,10 @@ Alle Mengen sind ganze Zahlen in der Einheit Stück.
 - Unterschiedliche bekannte Chargennummern bleiben getrennt.
 - Vollständig entnommene Materialposten werden gelöscht; historische Bewegungsinformationen bleiben erhalten.
 - Mehrbenutzerfähigkeit von Anfang an architektonisch berücksichtigen.
+- Anmeldung und Autorisierung bereits vor den fachlichen Schreibendpunkten einplanen; zum Start ausschließlich Rolle Administrator.
+- Das zentrale Auditlog ist Pflichtbestandteil und einzige Historienquelle, keine optionale Erweiterung.
 - Optionale Funktionen modular und unabhängig halten.
 
 ## Reihenfolge
 
-Siehe `ROADMAP.md`. Die erste technische Lieferung soll ein durch Tests abgesichertes Backend für Stammdaten und Bestandsbewegungen sein. Danach folgt die Weboberfläche.
+Siehe `ROADMAP.md`. Die erste technische Lieferung soll ein durch Tests abgesichertes Backend-Fundament einschließlich Authentifizierung, Administratorkonto, zentralem Auditlog und anschließender Stammdaten-/Bestandslogik sein. Danach folgt die Weboberfläche.
