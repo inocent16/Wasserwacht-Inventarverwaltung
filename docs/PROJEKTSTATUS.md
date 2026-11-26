@@ -24,7 +24,9 @@ Noch nicht vorhanden:
 - Authentifizierung und Benutzerverwaltung (für Version 1.0 verpflichtend; zunächst ausschließlich Rolle Administrator)
 - zentraler `AuditLogWriter`, registriert in Dependency Injection; fügt je fachlicher Aktion genau einen Eintrag zum gemeinsamen DbContext hinzu und speichert nicht separat
 - Schutz im DbContext: Auditlog-Einträge können nach dem Anlegen nicht geändert oder gelöscht werden
-- Datenbankmigrationen für die zentrale `AuditLog`-Tabelle
+- Initialmigration `20261126203000_InitialInventorySchema` für `Articles`, `Locations`, `StockItems` und die einzige zentrale `AuditLog`-Tabelle; EF-Core-Modellsnapshot vorhanden
+- EF-Core-Designzeitfactory und CI-Prüfung auf Abweichungen zwischen Modell und Snapshot
+- Migration wurde noch nicht gegen eine echte PostgreSQL-Instanz angewendet
 - Integration des Schreibdiensts in die noch nicht vorhandenen fachlichen Schreibservices; dadurch noch keine produktive Transaktionskette
 - React-Frontend
 - Docker-/lokale Startkonfiguration
