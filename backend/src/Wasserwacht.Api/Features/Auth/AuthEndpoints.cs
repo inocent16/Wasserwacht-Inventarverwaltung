@@ -43,14 +43,24 @@ public static class AuthEndpoints
     {
         await antiforgery.ValidateRequestAsync(context);
         var normalized = Normalize(request.UserName);
-        if (normalized.Length == 0 || string.IsNullOrWhiteSpace(request.Password))
+        if (normalized.Length == 0 || string.IsNullOrWhiteSpace(request.Password)
+            || request.Password.Length > 256)
             return Results.Unauthorized();
 
         var user = await db.Users.SingleOrDefaultAsync(
             x => x.NormalizedUserName == normalized && x.IsActive, context.RequestAborted);
-        if (user is null || hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password)
-            == PasswordVerificationResult.Failed)
+        if (user is null)
             return Results.Unauthorized();
+
+        var verification = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+        if (verification == PasswordVerificationResult.Failed)
+            return Results.Unauthorized();
+
+        if (verification == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.PasswordHash = hasher.HashPassword(user, request.Password);
+            await db.SaveChangesAsync(context.RequestAborted);
+        }
 
         var claims = new[]
         {
@@ -80,12 +90,12 @@ public static class AuthEndpoints
         var name = request.UserName?.Trim() ?? "";
         var display = request.DisplayName?.Trim() ?? "";
         var password = request.Password ?? "";
-        if (name.Length is < 3 or > 100 || display.Length is < 1 or > 200 || password.Length < 14)
+        if (name.Length is < 3 or > 100 || display.Length is < 1 or > 200 || password.Length is < 14 or > 256)
             return Results.ValidationProblem(new Dictionary<string, string[]>
             {
                 ["userName"] = ["Benutzername muss 3 bis 100 Zeichen lang sein."],
                 ["displayName"] = ["Anzeigename muss 1 bis 200 Zeichen lang sein."],
-                ["password"] = ["Passwort muss mindestens 14 Zeichen lang sein."]
+                ["password"] = ["Passwort muss mindestens 14 und höchstens 256 Zeichen lang sein."]
             });
 
         var normalized = Normalize(name);
