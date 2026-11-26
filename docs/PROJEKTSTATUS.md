@@ -23,10 +23,11 @@ Noch nicht vorhanden:
 - Authentifizierung und Benutzerverwaltung (für Version 1.0 verpflichtend; zunächst ausschließlich Rolle Administrator)
 - zentrales Auditlog als implementierte Historienquelle
 - React-Frontend
-- automatisierte Tests
+- xUnit-Modelltests unter `backend/tests/Wasserwacht.Api.Tests` (4 Tests)
+- GitHub-Actions-CI mit erfolgreichem Restore, Build und Testlauf
 - Docker-/lokale Startkonfiguration
 
-**Wichtig:** Der vorhandene Code ist ein technisches Grundgerüst, keine lauffähige Produktversion. Ein erfolgreicher Build oder Integrationstest ist bisher nicht dokumentiert.
+**Wichtig:** Der vorhandene Code ist weiterhin ein technisches Grundgerüst, keine lauffähige Produktversion. Der Backend-Build und die vier vorhandenen Modelltests laufen in GitHub Actions erfolgreich. Eine echte PostgreSQL-Integration, fachliche API-Endpunkte und vollständige Anwendungstests existieren noch nicht.
 
 ## Verbindlicher Produktumfang
 
