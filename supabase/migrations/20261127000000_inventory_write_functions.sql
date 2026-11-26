@@ -485,6 +485,8 @@ declare
   v_target public.stock_items%rowtype;
   v_source_key text;
   v_target_key text;
+  v_target_id uuid;
+  v_lock_id uuid;
   v_source_before jsonb;
   v_target_before jsonb;
   v_source_after jsonb;
@@ -539,10 +541,29 @@ begin
     perform pg_advisory_xact_lock(hashtextextended(v_source_key, 0));
   end if;
 
+  -- Discover the target row without locking, then lock source + target in the
+  -- same UUID order used by batch removals. The identity advisory locks prevent
+  -- concurrent insert/merge of these two identities while IDs are resolved.
+  select s.id into v_target_id
+  from public.stock_items s
+  where s.article_id = v_source_initial.article_id
+    and s.location_id = p_target_location_id
+    and s.expiration_date is not distinct from v_source_initial.expiration_date
+    and s.batch_number is not distinct from v_source_initial.batch_number
+    and s.manufacturer is not distinct from v_source_initial.manufacturer;
+
+  for v_lock_id in
+    select lock_ids.id
+    from (values (p_stock_item_id), (v_target_id)) as lock_ids(id)
+    where lock_ids.id is not null
+    order by lock_ids.id
+  loop
+    perform 1 from public.stock_items s where s.id = v_lock_id for update;
+  end loop;
+
   select * into v_source
   from public.stock_items
-  where id = p_stock_item_id
-  for update;
+  where id = p_stock_item_id;
 
   if not found then
     raise exception 'Source stock item no longer exists' using errcode = 'P0002';
