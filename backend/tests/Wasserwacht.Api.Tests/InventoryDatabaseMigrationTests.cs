@@ -1,4 +1,3 @@
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Wasserwacht.Api.Data;
 using Xunit;
@@ -28,10 +27,10 @@ public sealed class InventoryDatabaseMigrationTests
         var connection = context.Database.GetDbConnection();
         await using var command = connection.CreateCommand();
 
-        command.CommandText = "SELECT to_regclass('""AuditLog""') IS NOT NULL;";
+        command.CommandText = """SELECT to_regclass('"AuditLog"') IS NOT NULL;""";
         Assert.True((bool)(await command.ExecuteScalarAsync())!);
 
-        command.CommandText = "SELECT to_regclass('""StockMovements""') IS NULL;";
+        command.CommandText = """SELECT to_regclass('"StockMovements"') IS NULL;""";
         Assert.True((bool)(await command.ExecuteScalarAsync())!);
 
         command.CommandText = """
