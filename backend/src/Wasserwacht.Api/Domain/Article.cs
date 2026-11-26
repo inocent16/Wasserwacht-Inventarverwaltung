@@ -31,28 +31,3 @@ public sealed class StockItem
     public string? BatchNumber { get; set; }
     public string? Manufacturer { get; set; }
 }
-
-public enum StockMovementType
-{
-    Incoming = 1,
-    Transfer = 2,
-    Removal = 3
-}
-
-public sealed class StockMovement
-{
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public StockMovementType Type { get; set; }
-    public Guid ArticleId { get; set; }
-    public Article Article { get; set; } = null!;
-    public Guid? SourceLocationId { get; set; }
-    public Location? SourceLocation { get; set; }
-    public Guid? DestinationLocationId { get; set; }
-    public Location? DestinationLocation { get; set; }
-    public int Quantity { get; set; }
-    public DateOnly? ExpirationDate { get; set; }
-    public string? BatchNumber { get; set; }
-    public string? Manufacturer { get; set; }
-    public string? Note { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-}
