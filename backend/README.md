@@ -17,7 +17,19 @@ dotnet build
 dotnet run
 ```
 
-Die initiale EF-Core-Migration `20261126203000_InitialInventorySchema` und der Modellsnapshot sind vorhanden. Sie legen `Articles`, `Locations`, `StockItems` und genau eine zentrale `AuditLog`-Tabelle an. Die Migration wird nicht automatisch beim Anwendungsstart ausgeführt.
+Die EF-Core-Migrationen legen `Articles`, `Locations`, `StockItems`, genau eine zentrale `AuditLog`-Tabelle und die Kontentabelle `Users` an. Eine separate Bewegungs- oder Historientabelle gibt es nicht. Migrationen werden nicht automatisch beim Anwendungsstart ausgeführt.
+
+## Anmeldung und erster Administrator
+
+Die Anmeldung verwendet ein nicht persistentes, verschlüsseltes ASP.NET-Core-Authentifizierungs-Cookie (HttpOnly, Secure, SameSite=Strict, acht Stunden mit Sliding Expiration). Schreibende Auth-Endpunkte verlangen ein Antiforgery-Token im Header `X-CSRF-TOKEN`. Der Token wird über `GET /api/v1/auth/csrf` bezogen. Anmeldung: `POST /api/v1/auth/login`; aktuelle Sitzung: `GET /api/v1/auth/me`; Abmeldung: `POST /api/v1/auth/logout`. Benutzerkonten können nur angemeldete Administratoren über `POST /api/v1/auth/users` anlegen. Jedes Konto hat ausschließlich die Rolle Administrator.
+
+Nach dem Anwenden der Migrationen wird der erste Admin interaktiv im Terminal eingerichtet:
+
+```bash
+dotnet run -- --create-first-admin
+```
+
+Benutzername und Anzeigename werden abgefragt; das Passwort wird verdeckt eingegeben und muss mindestens 14 Zeichen haben. Das Verfahren funktioniert nur, solange noch kein Konto existiert. Zugangsdaten werden nicht als Kommandozeilenargument oder in der Konfiguration übergeben. Der Bootstrap schreibt genau einen Eintrag `InitialAdministratorCreated` in das zentrale AuditLog. Für den lokalen Betrieb ist HTTPS erforderlich, da die Authentifizierungs- und Antiforgery-Cookies ausschließlich Secure gesetzt werden.
 
 ## Tests
 
