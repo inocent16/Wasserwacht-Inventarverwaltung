@@ -6,6 +6,15 @@ Basispräfix: `/api/v1`
 
 Die API ist die fachliche Grenze zwischen Webclient und Backend. Bestandsänderungen erfolgen ausschließlich über Bewegungsendpunkte, nicht über direkte Mengenänderungen an Materialposten.
 
+## Anmeldung und Berechtigungen
+
+- Die Anmeldung mit persönlichen Konten ist für Version 1.0 verpflichtend.
+- Jeder reguläre API-Zugriff auf fachliche Daten erfordert eine Anmeldung.
+- Zum Start existiert ausschließlich die Rolle `Administrator`; jedes angelegte Konto erhält diese Rolle.
+- Konten werden ausschließlich durch einen angemeldeten Administrator angelegt; eine öffentliche Selbstregistrierung ist nicht vorgesehen.
+- Jede fachliche Änderung muss dem angemeldeten Konto zugeordnet und im zentralen Auditlog protokolliert werden.
+- Konkrete Authentifizierungstechnik, Sitzungs-/Token-Verfahren und Endpunktnamen für Anmeldung und Kontenverwaltung werden vor der Implementierung festgelegt.
+
 ## Artikel
 
 - `GET /api/v1/articles` – Artikelliste
