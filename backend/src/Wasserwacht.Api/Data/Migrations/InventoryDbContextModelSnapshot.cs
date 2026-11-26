@@ -15,6 +15,20 @@ public partial class InventoryDbContextModelSnapshot : ModelSnapshot
         modelBuilder.HasAnnotation("ProductVersion", "10.0.15");
         modelBuilder.HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+        modelBuilder.Entity("Wasserwacht.Api.Domain.InventoryUser", entity =>
+        {
+            entity.Property<Guid>("Id").ValueGeneratedOnAdd();
+            entity.Property<string>("UserName").HasMaxLength(100).IsRequired();
+            entity.Property<string>("NormalizedUserName").HasMaxLength(100).IsRequired();
+            entity.Property<string>("DisplayName").HasMaxLength(200).IsRequired();
+            entity.Property<string>("PasswordHash").HasMaxLength(1000).IsRequired();
+            entity.Property<DateTimeOffset>("CreatedAtUtc").HasColumnType("timestamp with time zone");
+            entity.Property<bool>("IsActive");
+            entity.HasKey("Id");
+            entity.HasIndex("NormalizedUserName").IsUnique();
+            entity.ToTable("Users");
+        });
+
         modelBuilder.Entity("Wasserwacht.Api.Domain.Article", entity =>
         {
             entity.Property<Guid>("Id").ValueGeneratedOnAdd();
