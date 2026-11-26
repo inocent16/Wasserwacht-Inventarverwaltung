@@ -57,6 +57,18 @@ public sealed class InventoryDbContextModelTests
     }
 
     [Fact]
+    public void UserNames_AreUniqueAndPasswordHashesAreRequired()
+    {
+        using var context = CreateContext();
+        var entity = context.Model.FindEntityType(typeof(InventoryUser));
+
+        Assert.NotNull(entity);
+        Assert.False(entity.FindProperty(nameof(InventoryUser.PasswordHash))!.IsNullable);
+        Assert.Contains(entity.GetIndexes(), index =>
+            index.IsUnique && index.Properties.Single().Name == nameof(InventoryUser.NormalizedUserName));
+    }
+
+    [Fact]
     public void AuditLog_IsTheOnlyHistoryTable()
     {
         using var context = CreateContext();
