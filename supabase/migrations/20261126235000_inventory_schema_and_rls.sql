@@ -1,4 +1,7 @@
 -- Core inventory schema and read-only RLS boundary.
+-- Future public-schema functions are not executable by API roles unless explicitly granted.
+alter default privileges revoke execute on functions from public;
+alter default privileges in schema public revoke execute on functions from anon, authenticated;
 -- All writes are intentionally routed through SECURITY DEFINER RPC functions
 -- in the following migration, where each business action writes one audit row.
 
@@ -87,7 +90,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = pg_catalog, public, pg_temp
+set search_path = ''
 as $$
   select exists (
     select 1
