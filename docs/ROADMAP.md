@@ -15,7 +15,8 @@
 - [x] Testprojekt und CI-Build einrichten (Build erfolgreich; 4 Modelltests bestanden)
 - [ ] Authentifizierungsverfahren und sichere erstmalige Einrichtung des ersten Administratorkontos festlegen
 - [ ] Anmeldung mit persönlichen Konten und ausschließlich der Rolle `Administrator` implementieren
-- [ ] Konkretes Datenmodell und Schreibdienst für das zentrale Auditlog festlegen; vor den ersten fachlichen Schreibendpunkten umsetzen
+- [x] Zentrale `AuditLog`-Entität und EF-Core-Tabellenmodell anlegen (genau eine Zeile je erfolgreicher Aktion)
+- [ ] Auditlog-Schreibdienst und Datenbankmigration umsetzen; vor den ersten fachlichen Schreibendpunkten fertigstellen
 
 ## Phase 2 – Stammdaten
 - [ ] Artikel CRUD
