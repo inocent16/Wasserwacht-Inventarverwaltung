@@ -59,6 +59,10 @@ Noch zu präzisieren: Verhalten bei fehlender Charge auf einer Seite und Bedeutu
 
 Wenn die Menge vollständig entnommen wird, wird der Materialposten gelöscht. Die zugehörigen Auditlog-Einträge bleiben erhalten. Historische Einträge dürfen nicht per Fremdschlüssel-Kaskade mit dem Materialposten gelöscht werden.
 
+## Benutzerkonten
+
+Version 1.0 unterstützt persönliche Benutzerkonten mit Anmeldung. Jede Änderung wird im zentralen Auditlog dem angemeldeten Benutzer zugeordnet. Wie Benutzerkonten initial angelegt und später verwaltet werden, ist noch festzulegen.
+
 ## Auditlog und Materialbewegungen
 
 Es gibt genau ein zentrales Auditlog für Änderungen in allen Anwendungsbereichen. Eine separate Materialbewegungstabelle ist nicht vorgesehen.
