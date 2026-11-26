@@ -64,6 +64,18 @@ Schreibzugriffe:
 
 RLS ist auf den Anwendungstabellen aktiviert. API-Rollen dürfen Daten nur als berechtigter Administrator lesen; direkte Tabellen-DML-Rechte sind entzogen. Schreibfunktionen prüfen die Administratorrolle selbst und schreiben die fachliche Änderung sowie genau einen AuditLog-Eintrag in einer Datenbanktransaktion.
 
+## Datenbankvalidierung
+
+GitHub Actions startet eine frische lokale Supabase-Instanz mit Docker, wendet alle drei Migrationen an und führt die pgTAP-Suite aus. Die aktuelle Suite prüft:
+- Tabellen, RLS-Aktivierung und Eindeutigkeit der Materialposten-Identität
+- Existenz der drei Bestands-RPCs und Fehlen einer separaten `stock_movements`-Tabelle
+- Zugriff für anon, authenticated ohne Administratorrolle und Administrator
+- direkten Schreibschutz und append-only AuditLog
+- Zugang, exakte Zusammenführung, unterschiedliche Chargen, Verschiebung und Sammelentnahme
+- genau einen AuditLog-Eintrag pro erfolgreicher Aktion und keinen Eintrag bei fehlgeschlagener Entnahme
+
+Diese Datenbank- und Frontend-CI-Prüfungen sind auf dem Migrationsbranch erfolgreich. Echte parallele Race-/Concurrency-Tests und Migrationen auf einem Cloud-Projekt stehen noch aus.
+
 ## Sicherheit
 - RLS ist für jede über die Data API erreichbare Anwendungstabelle verpflichtend.
 - Der Publishable Key darf im Browser verwendet werden, ist aber keine Berechtigung.
@@ -81,8 +93,7 @@ Das erste Konto wird manuell im Supabase-Dashboard erstellt und einmalig im SQL 
 ## Noch nicht umgesetzt / offen
 - Supabase-Cloud-Projekt und Region (Frankfurt bevorzugt)
 - Cloud-Migrationen anwenden und die reale Cloud-Konfiguration verifizieren
-- lokale pgTAP-CI und ausführliche Verhaltenstests vollständig grün
 - Admin-Einladungsfunktion und Passwortänderung/-zurücksetzung
+- echte parallele Concurrency-/Race-Integrationstests
 - Inventaroberfläche, geschützte Navigation und Deployment
 - fachliche Bestätigung der konservativen Merge- und Löschregeln
-
