@@ -14,7 +14,14 @@ Die Kategorie wird zunächst als Text am Artikel gespeichert. Später wird auf e
 
 ## Datenmodell – erster Stand
 
-Das Backend-Grundmodell enthält Artikel, Standorte, Materialposten und Materialbewegungen. Optionale Erweiterungen werden erst nach dem Kern umgesetzt.
+Das Backend-Grundmodell enthält Artikel, Standorte und Materialposten. Für die gesamte Anwendung gibt es genau ein zentrales Auditlog als einzige Quelle der Änderungshistorie. Eine separate Materialbewegungstabelle wird nicht verwendet. Auch Bestandszugänge, Verschiebungen und Entnahmen werden als Auditlog-Einträge protokolliert. Das konkrete Auditlog-Datenformat wird vor seiner Implementierung festgelegt.
+
+## Historie / Auditlog
+
+- Ein zentrales Auditlog protokolliert Änderungen in allen Anwendungsbereichen.
+- Es gibt keine zusätzliche, separate Materialbewegungstabelle.
+- Die Bewegungshistorie wird aus den passenden Auditlog-Einträgen dargestellt.
+- Audit-Einträge bleiben unabhängig vom Lebenszyklus der betroffenen Stammdaten und Materialposten erhalten; keine Kaskadenlöschung historischer Daten.
 
 ## Initialer Standort
 
@@ -22,4 +29,4 @@ Es wird beim ersten Start kein Standort automatisch angelegt. Standorte werden d
 
 ## Materialposten bei vollständiger Entnahme
 
-Wird die Menge eines Materialpostens vollständig entnommen, wird der Materialposten gelöscht, statt mit Menge 0 bestehen zu bleiben. Die dazugehörige Bewegungshistorie bleibt unabhängig davon dauerhaft erhalten. Die Löschung des aktuellen Bestandsdatensatzes darf daher niemals die historischen Bewegungsdaten löschen.
+Wird die Menge eines Materialpostens vollständig entnommen, wird der Materialposten gelöscht, statt mit Menge 0 bestehen zu bleiben. Die dazugehörigen Auditlog-Einträge bleiben unabhängig davon dauerhaft erhalten. Die Löschung des aktuellen Bestandsdatensatzes darf daher niemals historische Auditdaten löschen.
