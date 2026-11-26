@@ -61,7 +61,7 @@ Wenn die Menge vollständig entnommen wird, wird der Materialposten gelöscht. D
 
 ## Benutzerkonten
 
-Version 1.0 unterstützt persönliche Benutzerkonten mit Anmeldung. Jede Änderung wird im zentralen Auditlog dem angemeldeten Benutzer zugeordnet. Wie Benutzerkonten initial angelegt und später verwaltet werden, ist noch festzulegen.
+Version 1.0 unterstützt persönliche Benutzerkonten mit Anmeldung. Benutzerkonten werden ausschließlich durch einen Administrator angelegt; dieser stellt den neuen Benutzern ihre Zugangsdaten bereit. Jede Änderung wird im zentralen Auditlog dem angemeldeten Benutzer zugeordnet.
 
 ## Auditlog und Materialbewegungen
 
