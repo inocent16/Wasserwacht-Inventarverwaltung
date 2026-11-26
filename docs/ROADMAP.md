@@ -7,7 +7,7 @@
 - [x] React-Frontend durch Solid-/TanStack-Grundgerüst ersetzen
 - [x] Supabase Browser- und Server-Client vorbereiten
 - [x] E-Mail-/Passwort-Login und Session-Prüfung vorbereiten
-- [x] Supabase CLI-Konfiguration und Signup-Deaktivierung festlegen
+- [x] Supabase CLI-Konfiguration und lokale Signup-Deaktivierung festlegen
 
 ## Phase 1 – Supabase-Grundlage
 - [x] Profile-/Rollenmodell für Administratoren definieren
@@ -17,8 +17,12 @@
 - [x] Supabase-CLI und pgTAP-CI einrichten
 - [x] Migrationen auf frischer lokaler Supabase-Instanz in GitHub Actions anwenden
 - [x] Schema-, RLS- und Auth-Rollen-Tests erfolgreich in CI ausführen
-- [ ] Cloud-Projekt und Region verbindlich auswählen und anlegen
-- [ ] Cloud-Migrationen nach Review anwenden
+- [x] Supabase-Cloud-Projekt in Frankfurt anlegen
+- [x] Vier Migrationen auf Cloud-PostgreSQL anwenden
+- [x] Cloud-Schema, RLS und Rollenrechte prüfen
+- [x] TypeScript-Datenbanktypen aus Cloud-Schema generieren
+- [ ] Cloud-Self-Signup im Dashboard deaktivieren und verifizieren
+- [ ] Erstes Administratorkonto anlegen und Rolle freischalten
 - [ ] Admin-Einladungsfunktion und Passwort-Reset implementieren
 
 ## Phase 2 – AuditLog und Bestandslogik
@@ -47,6 +51,7 @@
 
 ## Phase 4 – Qualität und Bereitstellung
 - [x] RLS-Sicherheitstests mit anon/authenticated/admin
+- [x] Cloud-Rechteprüfung (RLS, service_role und RPC-EXECUTE)
 - [ ] End-to-End-Tests
 - [ ] Backup-/Restore-Test
 - [ ] Hosting und Deployment dokumentieren
