@@ -7,11 +7,10 @@ Die Anwendung wird als Solid-/TypeScript-Fullstack-Anwendung mit Supabase Cloud 
 - UI und Fullstack: SolidJS 1.9 mit TanStack Start 1.x
 - Routing: TanStack Router
 - Server-State: TanStack Query
-- Backend-Infrastruktur: Supabase Cloud
 - Authentifizierung: Supabase Auth
 - Persistenz: Supabase PostgreSQL
-- Schemaänderungen: versionierte SQL-Migrationen
-- Betrieb: Webanwendung mit verwalteter Cloud-Datenbank
+- Schemaänderungen: versionierte SQL-Migrationen in `supabase/migrations/`
+- lokale Datenbanktests: Supabase CLI und pgTAP
 
 Die Versions- und Migrationsentscheidung ist in `STACK-MIGRATION.md` dokumentiert.
 
@@ -19,53 +18,69 @@ Die Versions- und Migrationsentscheidung ist in `STACK-MIGRATION.md` dokumentier
 
 ### Frontend
 - Darstellung von Artikeln, Standorten und Beständen
-- Formulare und clientseitige Eingabevalidierung für Bedienkomfort
-- Auslösen von Zugängen, Verschiebungen und Sammelentnahmen über abgesicherte Datenbankfunktionen
+- Formulare und clientseitige Eingabevalidierung
+- Auslösen der auditierten RPCs
 - Anzeige verständlicher Fehler
 - keine fachlich maßgebliche Bestandsberechnung im Browser
 - keine privilegierten Supabase-Schlüssel im Client
 
 ### TanStack-Server
 - serverseitige Session-Verarbeitung über `@supabase/ssr`
-- sichere Server Functions und Server Routes für serverseitige Anwendungsfälle
-- Benutzer- und Rollenprüfung für administrative Aktionen
+- geschützte Server Functions und Server Routes
+- serverseitige Benutzer- und Rollenprüfung für administrative Aktionen
 - keine Duplizierung der fachlichen Bestandslogik, die in PostgreSQL liegt
 
 ### Supabase Auth
-- persönliche Konten und Sitzungen
-- Login, Logout und Token-Refresh
+- persönliche Konten mit E-Mail-Adresse und Passwort
+- Sitzungsverwaltung
 - Identität für RLS und AuditLog-Zuordnung
+- öffentliche Selbstregistrierung ist deaktiviert
 
 ### PostgreSQL
 - maßgebliche fachliche Daten und Constraints
-- Row Level Security für alle exponierten Tabellen
+- Row Level Security für alle exponierten Anwendungstabellen
 - transaktionale Bestandsfunktionen
-- genau eine zentrale AuditLog-Tabelle als einzige Quelle der Änderungshistorie
+- genau eine zentrale AuditLog-Tabelle
 - keine separate Materialbewegungstabelle
 
-## Datenbankzugriff
+## Tabellen
 
-RLS ist für alle Anwendungstabellen zu aktivieren. Browserzugriffe nutzen ausschließlich den Publishable Key und den authentifizierten Benutzerkontext. Serverseitige Admin-Schlüssel sind ausschließlich in Server Functions zulässig.
+- `profiles`: Profil zur Auth-Identität; Rolle ist anfangs NULL und wird ausschließlich kontrolliert auf `administrator` gesetzt
+- `articles`: Artikelstammdaten
+- `locations`: frei verwaltete Standorte
+- `stock_items`: aktuelle Materialposten; Menge ist eine positive ganze Zahl
+- `audit_log`: einzige Historienquelle, append-only
 
-Einfache Artikel- und Standortabfragen können über den Supabase Client erfolgen. Bestandszugänge, Verschiebungen und Sammelentnahmen werden ausschließlich als PostgreSQL-Funktionen implementiert und aufgerufen. Jede solche Funktion muss Bestandsänderung und genau einen AuditLog-Eintrag in derselben Transaktion speichern.
+## Datenbankzugriff und Sicherheit
 
-## Transaktionen und Konsistenz
+RLS ist auf allen Anwendungstabellen aktiviert. Die API-Rollen erhalten für Artikeldaten, Standorte, Bestände und AuditLog nur die notwendigen SELECT-Rechte. Direkte Tabellenänderungen sind entzogen.
 
-PostgreSQL-Funktionen laufen in einer Datenbanktransaktion. Schlägt eine Validierung, Bestandsänderung oder AuditLog-Schreiboperation fehl, wird die Aktion vollständig zurückgerollt.
+Artikel- und Standortänderungen erfolgen über `create_article`, `update_article`, `delete_article`, `create_location`, `update_location` und `delete_location`. Diese RPCs schreiben jeweils genau einen AuditLog-Eintrag.
 
-Bei parallelen Benutzern muss verhindert werden, dass zwei gleichzeitige Entnahmen denselben verfügbaren Bestand überziehen. Die Implementierung muss Zeilensperren oder eine gleichwertige Concurrency-Strategie verwenden und mit PostgreSQL-Integrationstests abgesichert werden.
+Bestandsänderungen erfolgen ausschließlich über:
+- `receive_stock`
+- `transfer_stock`
+- `remove_stock_batch`
 
-## Auditlog
+Jede schreibende Funktion prüft innerhalb der Datenbank, ob `auth.uid()` eine freigeschaltete Administratorrolle besitzt. SECURITY DEFINER-Funktionen verwenden einen leeren `search_path`, qualifizierte Objektnamen und explizite EXECUTE-Rechte. Service-Role-/Secret-Keys gehören niemals in den Browser.
 
-Das zentrale Auditlog ist die einzige Quelle der Änderungshistorie. Jede erfolgreich abgeschlossene fachliche Aktion erzeugt genau einen Eintrag mit vollständigem Vorher- und Nachher-Zustand aller betroffenen Datensätze sowie der auslösenden Benutzer-ID.
+## Zusammenführung und Konkurrenz
 
-Audit-Einträge bleiben unabhängig vom Lebenszyklus der betroffenen Artikel, Standorte und Materialposten erhalten. Es gibt keine StockMovement-Tabelle und keine separate Bewegungshistorie. Der fachliche Detailentwurf bleibt in `AUDITLOG-KONZEPT.md` maßgeblich.
+Materialposten werden nur bei exakt gleichen Identitätsmerkmalen zusammengeführt: Artikel, Standort, Ablaufdatum, Charge und Hersteller. NULL wird nicht mit einem bekannten Wert gleichgesetzt. Dies ist ein sicherer Implementierungsstandard, bis die offenen Fachfragen endgültig bestätigt sind.
 
-## Authentifizierung und Rollen
+Die Materialidentität wird bei Zugängen und Verschiebungszielen mit transaktionalen Advisory Locks serialisiert. Quell-/Zielzeilen und Sammelentnahmeposten werden in deterministischer UUID-Reihenfolge gesperrt. Die Datenbank verhindert zusätzlich doppelte Identitäten mit einem Unique Index `NULLS NOT DISTINCT`.
 
-Zum Start existiert ausschließlich die Rolle `Administrator`. Selbstregistrierung ist nicht vorgesehen; Konten werden durch einen Administrator angelegt. Die Rolle wird in einem geschützten Profil-/Rollenmodell gespeichert und durch RLS sowie serverseitige Admin-Funktionen geprüft.
+Sammelentnahmen referenzieren konkrete Materialposten-UUIDs; es gibt keine implizite FIFO-/FEFO-Verteilung.
 
-Die endgültige Login-Kennung und der Bootstrap-Prozess für den ersten Administrator müssen vor Implementierung der Auth-Flows festgelegt werden. Supabase Auth unterstützt nativ E-Mail- und Telefonidentitäten; die bisherige frei wählbare Benutzername-Anmeldung ist daher nicht unverändert übertragbar.
+## Transaktionen und AuditLog
+
+Jede RPC ist eine einzelne PostgreSQL-Transaktion. Scheitert irgendein Schritt, werden Bestandsänderung und AuditLog gemeinsam zurückgerollt. Es gibt genau einen AuditLog-Eintrag pro erfolgreicher fachlicher Aktion.
+
+AuditLog-Einträge enthalten unveränderliche Actor-ID und E-Mail-Snapshot, Ereignistyp, vollständige Vorher-/Nachher-Snapshots und optionale Metadaten. Keine Audit-Fremdschlüssel dürfen historische Einträge mit aktuellen Stammdaten koppeln.
+
+## Löschen
+
+Artikel und Standorte können nur gelöscht werden, wenn keine aktuellen Materialposten darauf verweisen. Historieneinträge blockieren das Löschen nicht, weil sie die vollständigen Zustände als JSONB-Snapshots enthalten und keine FK-Kaskaden besitzen. Diese Löschregel ist vor dem Produktivstart fachlich zu bestätigen.
 
 ## Optionale Module
 
