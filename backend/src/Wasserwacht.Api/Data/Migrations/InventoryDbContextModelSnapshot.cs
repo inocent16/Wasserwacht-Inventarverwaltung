@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Wasserwacht.Api.Data;
@@ -43,8 +44,8 @@ public partial class InventoryDbContextModelSnapshot : ModelSnapshot
             entity.Property<Guid>("ActorUserId");
             entity.Property<string>("ActorNameSnapshot").HasMaxLength(200).IsRequired();
             entity.Property<string>("EventType").HasMaxLength(100).IsRequired();
-            entity.Property<string>("BeforeState").HasColumnType("jsonb");
-            entity.Property<string>("AfterState").HasColumnType("jsonb");
+            entity.Property<JsonDocument>("BeforeState").HasColumnType("jsonb");
+            entity.Property<JsonDocument>("AfterState").HasColumnType("jsonb");
             entity.HasKey("Id");
             entity.HasIndex("OccurredAtUtc");
             entity.HasIndex("ActorUserId");
