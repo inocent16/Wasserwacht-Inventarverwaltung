@@ -2,63 +2,58 @@
 
 Modulare Inventar- und Materialverwaltung für eine Wasserwacht-Ortsgruppe.
 
-## Ziel
+## Projektziel
 
-Das verpflichtende Kernsystem verwaltet **Artikel, Standorte, Materialposten und Materialbewegungen**. Alle weiteren Funktionen sind optionale Erweiterungen und können unabhängig je Artikel oder Standort genutzt werden.
+Eine lokal betreibbare Webanwendung zur Verwaltung von Artikeln, Standorten, aktuellen Materialposten und Materialbewegungen. Das Pflichtsystem besteht ausschließlich aus diesen Kernbereichen. Optionale Funktionen werden unabhängig ergänzt und dürfen die Kernverwaltung nicht blockieren.
 
 ## Technologie
 
 - Frontend: React + TypeScript
 - Backend: ASP.NET Core / C#
 - Datenbank: PostgreSQL
-- Zunächst lokaler Betrieb; Mehrbenutzerfähigkeit architektonisch vorbereiten
-- Mobile Anwendung erst nach Fertigstellung der Webanwendung, anschließend mit gleichem Funktionsumfang
+- ORM: Entity Framework Core / Npgsql
+- zunächst lokaler Betrieb; Mehrbenutzerfähigkeit von Anfang an berücksichtigen
+- mobile Anwendung erst nach Fertigstellung der Webanwendung, dann mit gleichem Funktionsumfang
 
-## Pflichtumfang (Kernsystem)
+## Kernumfang Version 1.0
 
-- Artikel anlegen und verwalten
-- Beliebig viele Standorte anlegen und verwalten
-- Materialposten je Artikel und Standort mit Menge führen
-- Ablaufdatum, Charge und Hersteller optional erfassen
-- Materialzugänge, Verschiebungen und Sammelentnahmen
-- Passende Materialposten sowohl bei Zugängen als auch bei Verschiebungen zusammenführen
+- Artikelverwaltung
+- Standortverwaltung
+- Materialposten je Artikel und Standort
+- Materialzugang
+- Verschiebung zwischen Standorten
+- Sammelentnahme mehrerer Artikel aus einem Standort
+- nachvollziehbare Bewegungshistorie
 
-### Fachliche Grundregeln
+## Verbindliche fachliche Regeln
 
+- Alle Artikelmengen werden in **Stück** als ganze Zahlen geführt.
 - Alle Standorte sind gleichberechtigt; es gibt keine Standorttypen.
-- Das Lager ist der Standard-Ausgangsstandort für Entnahmen/Bewegungen und Standard-Ziel für neue Zugänge. Es ist nicht automatisch die beim App-Start geöffnete Ansicht.
-- Artikel ohne Ablaufdatum werden vollständig unterstützt.
-- Identische Posten werden zusammengeführt, wenn Artikel, Standort, Ablaufdatum und Chargenangaben zusammenpassen. Unterschiedliche bekannte Chargen bleiben getrennt.
-- Sollbestände sind optional und werden je Artikel und Standort festgelegt; es gibt keinen globalen Mindestwert.
+- Standorte werden durch Anwender angelegt. Beim ersten Start wird keiner automatisch erzeugt.
+- Es gibt keine fest eingebaute Sonderrolle oder Standardstandort-Logik für „Lager“.
+- Ablaufdatum, Charge und Hersteller sind bei Materialposten optional.
+- Artikel ohne Ablaufdatum werden unterstützt.
+- Passende Materialposten werden sowohl bei Zugang als auch bei Verschiebung zusammengeführt.
+- Unterschiedliche bekannte Chargennummern bleiben getrennt.
+- Bei vollständiger Entnahme wird der Materialposten gelöscht. Die zugehörige Historie bleibt dauerhaft erhalten.
+- Optionale Funktionen dürfen keine Voraussetzung für den Kernbetrieb sein.
 
 ## Optionale Erweiterungen
 
-Zusatzfunktionen dürfen das Kernsystem weder voraussetzen noch blockieren. Sie werden nur dort verwendet, wo sie benötigt werden.
+Mögliche unabhängig nutzbare Erweiterungen sind Sollbestände und Soll-Ist-Warnungen, Ablaufwarnungen, Materialtausch, Verplombung und Kontrollen pro Standort, Nachfüllhinweise, Bestellkennzeichnung, Auditlog sowie Backup und Wiederherstellung. Sie sind nicht Voraussetzung für den Kernumfang.
 
-- Ablaufwarnungen
-- Soll-Ist-Warnungen
-- Materialtausch (z. B. denselben Artikel mit neuem Ablaufdatum erfassen)
-- Verplombung je Standort: Checkbox und Datum; beim Entfernen des Hakens nach dem Grund fragen
-- Regelmäßige Kontrollen je Standort
-- Nachfüllhinweise
-- Bestellkennzeichnung
-- Auditlog
-- Backups und Wiederherstellung
+## Dokumentation für Entwickler
 
-Jeder Standort kann unabhängig konfigurieren, ob Verplombung, Kontrollen oder weitere Standortfunktionen genutzt werden. Es gibt keine unterschiedlichen Standortklassen.
+- [Projektstatus und Übergabe](docs/PROJEKTSTATUS.md)
+- [Anforderungen](docs/ANFORDERUNGEN.md)
+- [Entscheidungen](docs/ENTSCHEIDUNGEN.md)
+- [Offene Fragen – vor betroffenen Implementierungen klären](docs/OFFENE_FRAGEN.md)
+- [Architektur](docs/ARCHITEKTUR.md)
+- [Fachliches Datenmodell](docs/DOMAENENMODELL.md)
+- [API-Kontrakt (Entwurf)](docs/API-KONTRAKT.md)
+- [Entwicklerstart](docs/ENTWICKLERSTART.md)
+- [Roadmap](docs/ROADMAP.md)
 
-## Entwicklungsplan
+## Aktueller Entwicklungsstand
 
-1. Datenmodell und Architektur festlegen
-2. ASP.NET-Core-Backend und PostgreSQL-Anbindung
-3. Artikel- und Standortverwaltung
-4. Materialposten und Bestandsansichten
-5. Zugänge, Verschiebungen und Sammelentnahmen
-6. Zusammenführungsregeln und Validierungen
-7. Optionale Funktionen schrittweise ergänzen
-8. Tests und lokale Bereitstellung
-9. Mobile Anwendung als letzter Entwicklungsschritt
-
-## Status
-
-Die Anforderungsanalyse und grundlegenden Produktentscheidungen sind erfolgt. Die Implementierung startet mit dem technischen Grundgerüst und dem verpflichtenden Kernsystem.
+Das Repository enthält ein erstes ASP.NET-Core-Grundgerüst und die fachliche/technische Entwicklerdokumentation. Es gibt noch keine vollständige API, keine Datenbankmigrationen, keine React-Anwendung und keine automatisierten Tests. Der Status ist in [docs/PROJEKTSTATUS.md](docs/PROJEKTSTATUS.md) detailliert beschrieben.
