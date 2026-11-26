@@ -26,7 +26,8 @@ Die Anwendung wird als Webanwendung mit getrenntem Frontend und Backend umgesetz
 - Transaktionsgrenzen
 - Zusammenführungsregeln für Materialposten
 - Schutz vor negativen Beständen und konkurrierenden Änderungen
-- spätere Authentifizierung und Autorisierung
+- Authentifizierung und Autorisierung bereits für Version 1.0; persönliche Benutzerkonten
+- Zuordnung jeder protokollierten Änderung zum angemeldeten Benutzer
 
 ### Datenbank
 - dauerhafte Stammdaten und Bestände
