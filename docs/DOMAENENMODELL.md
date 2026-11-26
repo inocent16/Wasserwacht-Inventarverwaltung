@@ -68,7 +68,7 @@ Das Auditlog protokolliert unter anderem die fachlichen Vorgänge:
 - Verschiebung: eine Menge von einem Standort zu einem anderen bewegen
 - Sammelentnahme: mehrere Positionen aus einem Standort in einem Vorgang entnehmen
 
-Die Bewegungshistorie wird aus den entsprechenden Auditlog-Einträgen dargestellt. Eine Sammelentnahme muss als fachlich zusammengehöriger Vorgang erkennbar sein. Jeder Auditlog-Eintrag speichert den vollständigen Vorher- und Nachher-Zustand der betroffenen Daten, soweit für das Ereignis anwendbar. Das konkrete Datenformat und die Zuordnung zusammengehöriger Einträge sind vor der Implementierung festzulegen.
+Die Bewegungshistorie wird aus den entsprechenden Auditlog-Einträgen dargestellt. Eine Sammelentnahme muss als fachlich zusammengehöriger Vorgang erkennbar sein. Jeder Auditlog-Eintrag speichert den vollständigen Vorher- und Nachher-Zustand der betroffenen Daten, soweit für das Ereignis anwendbar, sowie die Identität des auslösenden Benutzers. Das konkrete Datenformat und die Zuordnung zusammengehöriger Einträge sind vor der Implementierung festzulegen.
 
 ## Sollbestand
 
