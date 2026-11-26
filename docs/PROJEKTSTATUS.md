@@ -39,17 +39,19 @@ Die stabile TanStack-Solid-Start-Version verwendet derzeit Solid 1.x. Solid 2 bl
 - advisory-/row-level concurrency locks und Unique Identity Index
 - append-only Schutz für das zentrale AuditLog
 - Supabase CLI-Konfiguration mit deaktivierter öffentlicher Registrierung
-- pgTAP-Schema-/Berechtigungstests und separate Database-CI
+- pgTAP-Schema-, RLS-, Rollen- und Bestandsablauf-Tests
+- Database-CI: frische lokale Supabase-Instanz startet, alle drei Migrationen werden angewendet und die pgTAP-Suite besteht
+- Frontend-CI: Vite Build und TypeScript-Prüfung erfolgreich
 - Architektur- und Entwicklerdokumentation aktualisiert
 
 ## Noch nicht vorhanden / noch zu verifizieren
 - Supabase-Cloud-Projekt, Region und konfigurierte Secrets
 - Ausführung der Migrationen gegen eine echte Cloud-Instanz
-- lokaler Supabase-/pgTAP-Lauf und grüner Database-CI-Status (GitHub Actions prüfen)
-- ausführliche Verhaltenstests für Bestandsfunktionen, AuditLog-Rollback und Concurrency
+- echte parallele Concurrency-/Race-Integrationstests (bisher Sperrmechanismen und Constraints implementiert, Bestandsabläufe sequenziell getestet)
 - Admin-Einladungsfunktion und Passwortänderung/-zurücksetzung
 - geschützte Anwendungsnavigation und vollständige Inventaroberfläche
 - Deployment-Konfiguration und End-to-End-Tests
+- Backup-/Restore-Test
 
 ## Verbindlicher Produktumfang
 1. Artikelverwaltung.
@@ -75,4 +77,4 @@ Alle Mengen sind ganze Zahlen in Stück.
 - Optionale Funktionen dürfen den Kernbetrieb nicht blockieren.
 
 ## Nächste Schritte
-Siehe `ROADMAP.md`. Zuerst CI-/Datenbankmigrationen verifizieren und Fachfragen zu Merge/Löschen abschließen. Danach Admin-Einladungen, geschützte Navigation und Inventaroberfläche umsetzen.
+Siehe `ROADMAP.md`. Als Nächstes Supabase-Cloud-Projekt/Region einrichten und Migrationen nach Review dort anwenden. Danach Admin-Einladungsfunktion, geschützte Navigation und Inventaroberfläche umsetzen.
