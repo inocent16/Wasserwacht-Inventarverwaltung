@@ -56,4 +56,4 @@ dotnet ef migrations list --project src/Wasserwacht.Api/Wasserwacht.Api.csproj -
 dotnet ef database update --project src/Wasserwacht.Api/Wasserwacht.Api.csproj --startup-project src/Wasserwacht.Api/Wasserwacht.Api.csproj
 ```
 
-Die GitHub-Actions-Pipeline prüft zusätzlich, ob das EF-Core-Modell vom gespeicherten Migrationssnapshot abweicht. Die Migration wird dort nicht auf eine produktive Datenbank angewendet.
+Die GitHub-Actions-Pipeline prüft zusätzlich, ob das EF-Core-Modell vom gespeicherten Migrationssnapshot abweicht, und führt einen Migrationstest gegen einen kurzlebigen PostgreSQL-17-Dienst aus. Dabei wird das Schema angelegt und geprüft, dass die zentrale `AuditLog`-Tabelle existiert, JSONB verwendet wird und keine `StockMovements`-Tabelle angelegt wird. Die Migration wird nicht auf eine produktive Datenbank angewendet.
