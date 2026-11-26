@@ -1,68 +1,73 @@
 # Projektstatus und Entwicklerübergabe
 
-Stand: 26.11.2026  
+Stand: 26.11.2026
 Ziel: Version 1.0
 
 ## Kurzüberblick
+Es entsteht eine Webanwendung zur Verwaltung des Materials einer Wasserwacht-Ortsgruppe. Die Zielarchitektur wurde auf SolidJS + TanStack Start + Supabase Cloud umgestellt. Das bisherige C#-Backend bleibt während der Migration als Referenz erhalten.
 
-Es entsteht eine lokale Webanwendung zur Verwaltung des Materials einer Wasserwacht-Ortsgruppe. Der verbindliche Kern besteht aus Artikelverwaltung, Standortverwaltung, Materialposten und Materialbewegungen. Optionale Funktionen dürfen diesen Kern nicht voraussetzen oder blockieren.
+## Zieltechnologie
+- SolidJS 1.9
+- TanStack Start 1.x / TanStack Router
+- TanStack Query 5.x
+- Supabase Cloud: PostgreSQL und Auth
+- `@supabase/ssr` für Cookie-basierte SSR-Sitzungen
+- TypeScript und Zod
 
-## Aktueller technischer Stand
+Die stabile TanStack-Solid-Start-Version verwendet derzeit Solid 1.x. Solid 2 bleibt ein späteres Upgrade, sobald die zugehörige TanStack-Integration stabil ist.
 
-Vorhanden:
+## Bereits vorhanden
+
+### Bisheriger Stand (Übergangsbestand)
 - ASP.NET-Core-Webprojekt unter `backend/src/Wasserwacht.Api`
-- Entity-Framework-Core-/Npgsql-Abhängigkeiten
-- Domainklassen für Artikel, Standorte und Materialposten
-- zentrale `AuditLogEntry`-Entität und genau eine `AuditLog`-Tabelle im EF-Core-Modell
-- EF-Core-DbContext und einfacher Health-Endpunkt
-- grundlegende Anforderungen und Entscheidungen in `docs/`
+- EF-Core-/Npgsql-Abhängigkeiten und PostgreSQL-Migrationen
+- Domainklassen für Artikel, Standorte, Materialposten und AuditLog
+- Administrator-Anmeldung im C#-Backend
+- Tests und getrennte Backend-CI
 
-Bereits vorhanden:
-- Initialmigration `20261126203000_InitialInventorySchema` und Migration für Benutzerkonten
-- EF-Core-Designzeitfactory und CI-Prüfung auf Abweichungen zwischen Modell und Snapshot
-- PostgreSQL-Integrationstest in CI
-- zentraler `AuditLogWriter`; ergänzt Einträge am gemeinsamen DbContext ohne separat zu speichern
-- Auditlog-Schutz im DbContext gegen Änderungen und Löschungen
-- Administrator-Anmeldung mit Session-Cookie, CSRF-Schutz, Login-Rate-Limit und einmaliger interaktiver Ersteinrichtung
-- React-/TypeScript-Frontend mit Login, Logout, Session-Prüfung und Vite-API-Proxy
-- getrennte GitHub-Actions-Workflows für Backend und Frontend
+### Neue Plattformbasis auf dem Migrationsbranch
+- React-Abhängigkeiten durch SolidJS ersetzt
+- TanStack Start und TanStack Router als Fullstack-/Routing-Grundlage
+- TanStack Query Provider und request-scoped QueryClient vorbereitet
+- Supabase Browser- und Server-Client mit `@supabase/ssr` vorbereitet
+- Supabase-Umgebungsvariablen dokumentiert
+- Architektur- und Entwicklerdokumentation auf die Zielplattform umgestellt
 
-Noch nicht vorhanden:
-- fachliche Services und Validierungen
-- CRUD-Endpunkte für Artikel und Standorte
-- Bestandsabfragen und Bestandsänderungen (Zugang, Verschiebung, Sammelentnahme)
-- Integration des AuditLogWriter in fachliche Schreibservices; dadurch noch keine produktive Transaktionskette für Materialaktionen
-- vollständige Inventaroberfläche im Frontend
-- Docker-/lokale Startkonfiguration
-
-**Wichtig:** Der vorhandene Code ist weiterhin ein technisches Grundgerüst, keine lauffähige Produktversion. Das EF-Core-Modell enthält die zentrale `AuditLog`-Tabelle; der Build und alle 13 vorhandenen Tests laufen in GitHub Actions erfolgreich. Eine echte PostgreSQL-Integration der Migration und der Transaktionskette, fachliche API-Endpunkte und vollständige Anwendungstests existieren noch nicht.
+## Noch nicht vorhanden
+- Supabase-Cloud-Projekt und konfigurierte Secrets
+- SQL-Migrationen für das neue Schema
+- RLS-Policies und Sicherheitstests
+- Supabase-Auth-Flows und initiale Administratoranlage
+- fachliche CRUD-Funktionen für Artikel und Standorte
+- Bestandsabfragen sowie Zugang, Verschiebung und Sammelentnahme
+- transaktionale PostgreSQL-Funktionen und zentrale AuditLog-Implementierung
+- vollständige Inventaroberfläche
+- Deployment-Konfiguration und End-to-End-Tests
 
 ## Verbindlicher Produktumfang
+1. Artikelverwaltung.
+2. Standortverwaltung.
+3. Materialposten je Artikel und Standort.
+4. Materialzugänge.
+5. Verschiebung zwischen Standorten.
+6. Sammelentnahme mehrerer Artikel aus einem Standort.
+7. Dauerhafte Historie auch nach vollständiger Entnahme eines Materialpostens.
 
-1. Artikel anlegen, anzeigen, ändern und löschen (Löschregeln noch fachlich festzulegen).
-2. Standorte anlegen, anzeigen, ändern und löschen (Löschregeln noch fachlich festzulegen).
-3. Materialposten je Artikel und Standort verwalten.
-4. Materialzugänge erfassen.
-5. Material zwischen Standorten verschieben.
-6. Mehrere Artikel in einer Sammelentnahme aus einem Standort ausbuchen.
-7. Historische Bewegungsinformationen bleiben erhalten, auch wenn ein aktueller Materialposten vollständig aufgebraucht und gelöscht wird.
+Alle Mengen sind ganze Zahlen in Stück.
 
-Alle Mengen sind ganze Zahlen in der Einheit Stück.
-
-## Leitplanken für die Umsetzung
-
-- Keine automatische Anlage eines Standorts beim ersten Start.
-- Keine fest eingebauten Standorttypen.
-- Kein fest eingebauter Standort namens „Lager“ und keine implizite Standardstandort-Logik, solange diese nicht ausdrücklich entschieden ist.
-- Artikel ohne Ablaufdatum müssen unterstützt werden.
-- Identische Bestände werden bei Zugang und Verschiebung zusammengeführt.
+## Leitplanken
+- Keine automatische Standortanlage.
+- Keine Standorttypen und kein fest eingebauter Standort „Lager“.
+- Artikel ohne Ablaufdatum werden unterstützt.
+- Passende Posten werden bei Zugang und Verschiebung zusammengeführt.
 - Unterschiedliche bekannte Chargennummern bleiben getrennt.
-- Vollständig entnommene Materialposten werden gelöscht; historische Bewegungsinformationen bleiben erhalten.
-- Mehrbenutzerfähigkeit von Anfang an architektonisch berücksichtigen.
-- Anmeldung und Autorisierung bereits vor den fachlichen Schreibendpunkten einplanen; zum Start ausschließlich Rolle Administrator.
-- Das zentrale Auditlog ist Pflichtbestandteil und einzige Historienquelle, keine optionale Erweiterung.
-- Optionale Funktionen modular und unabhängig halten.
+- Vollständig entnommene Posten werden gelöscht, Historieneinträge bleiben.
+- Genau eine zentrale AuditLog-Tabelle, genau ein Eintrag pro erfolgreicher fachlicher Aktion.
+- Es gibt keine StockMovement-Tabelle und keine separate Bewegungshistorie.
+- Bestandsänderung und AuditLog-Eintrag müssen atomar sein.
+- Mehrbenutzerfähigkeit und Concurrency-Schutz sind Pflicht.
+- Zum Start ausschließlich Administrator; keine öffentliche Selbstregistrierung.
+- Optionale Funktionen dürfen den Kernbetrieb nicht blockieren.
 
-## Reihenfolge
-
-Siehe `ROADMAP.md`. Die erste technische Lieferung soll ein durch Tests abgesichertes Backend-Fundament einschließlich Authentifizierung, Administratorkonto, zentralem Auditlog und anschließender Stammdaten-/Bestandslogik sein. Danach folgt die Weboberfläche.
+## Nächste Schritte
+Siehe `ROADMAP.md`. Als Nächstes folgen Supabase-Projekt/Region, SQL-Schema und RLS. Danach Authentifizierung und Admin-Bootstrap, anschließend AuditLog und transaktionale Bestandsfunktionen.
