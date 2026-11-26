@@ -72,6 +72,14 @@ public sealed class InventoryDbContextModelTests
     }
 
     [Fact]
+    public void InitialInventoryMigration_IsRegistered()
+    {
+        using var context = CreateContext();
+
+        Assert.Contains("20261126203000_InitialInventorySchema", context.Database.GetMigrations());
+    }
+
+    [Fact]
     public void AuditLog_Snapshots_AreNullableJsonb()
     {
         using var context = CreateContext();
