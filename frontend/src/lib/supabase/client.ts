@@ -1,7 +1,8 @@
 import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "./database.types";
 
-let browserClient: SupabaseClient | undefined;
+let browserClient: SupabaseClient<Database> | undefined;
 
 function readPublicSupabaseConfig() {
   const url = import.meta.env.VITE_SUPABASE_URL;
@@ -13,13 +14,13 @@ function readPublicSupabaseConfig() {
 }
 
 /** Creates the cookie-aware Supabase client for browser components. */
-export function getSupabaseBrowserClient(): SupabaseClient {
+export function getSupabaseBrowserClient(): SupabaseClient<Database> {
   if (typeof window === "undefined") {
     throw new Error("Der Browser-Supabase-Client darf nur im Browser verwendet werden.");
   }
   if (!browserClient) {
     const { url, publishableKey } = readPublicSupabaseConfig();
-    browserClient = createBrowserClient(url, publishableKey);
+    browserClient = createBrowserClient<Database>(url, publishableKey);
   }
   return browserClient;
 }
