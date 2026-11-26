@@ -5,7 +5,7 @@ import {
   signInWithPassword,
   signOut,
   type AuthenticatedUser
-} from "../lib/auth/auth.server";
+} from "../lib/auth/auth.functions";
 
 export const Route = createFileRoute("/")({ component: LoginPage });
 
