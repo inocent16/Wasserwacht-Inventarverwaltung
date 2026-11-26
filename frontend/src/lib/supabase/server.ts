@@ -4,8 +4,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 /** Creates a request-scoped Supabase client. Call only from server code. */
 export function createSupabaseServerClient(): SupabaseClient {
-  const url = process.env.VITE_SUPABASE_URL;
-  const publishableKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   if (!url || !publishableKey) {
     throw new Error("Supabase ist nicht konfiguriert. Bitte VITE_SUPABASE_URL und VITE_SUPABASE_PUBLISHABLE_KEY setzen.");
   }
