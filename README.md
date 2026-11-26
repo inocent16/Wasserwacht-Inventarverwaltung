@@ -23,7 +23,8 @@ Eine lokal betreibbare Webanwendung zur Verwaltung von Artikeln, Standorten, akt
 - Materialzugang
 - Verschiebung zwischen Standorten
 - Sammelentnahme mehrerer Artikel aus einem Standort
-- nachvollziehbare Bewegungshistorie
+- zentrale Änderungs- und Bewegungshistorie (Auditlog)
+- Anmeldung mit persönlichen Konten; zum Start ausschließlich die Rolle Administrator
 
 ## Verbindliche fachliche Regeln
 
@@ -36,11 +37,14 @@ Eine lokal betreibbare Webanwendung zur Verwaltung von Artikeln, Standorten, akt
 - Passende Materialposten werden sowohl bei Zugang als auch bei Verschiebung zusammengeführt.
 - Unterschiedliche bekannte Chargennummern bleiben getrennt.
 - Bei vollständiger Entnahme wird der Materialposten gelöscht. Die zugehörige Historie bleibt dauerhaft erhalten.
+- Ein zentrales Auditlog ist die einzige Quelle der Änderungshistorie und gehört zum Pflichtumfang.
+- Bestandsänderungen und zugehörige Auditlog-Einträge werden transaktional gespeichert.
+- Zum Start gibt es ausschließlich die Rolle Administrator; Konten werden durch einen Administrator angelegt.
 - Optionale Funktionen dürfen keine Voraussetzung für den Kernbetrieb sein.
 
 ## Optionale Erweiterungen
 
-Mögliche unabhängig nutzbare Erweiterungen sind Sollbestände und Soll-Ist-Warnungen, Ablaufwarnungen, Materialtausch, Verplombung und Kontrollen pro Standort, Nachfüllhinweise, Bestellkennzeichnung, Auditlog sowie Backup und Wiederherstellung. Sie sind nicht Voraussetzung für den Kernumfang.
+Mögliche unabhängig nutzbare Erweiterungen sind Sollbestände und Soll-Ist-Warnungen, Ablaufwarnungen, Materialtausch, Verplombung und Kontrollen pro Standort, Nachfüllhinweise, Bestellkennzeichnung sowie Backup und Wiederherstellung. Sie sind nicht Voraussetzung für den Kernumfang.
 
 ## Dokumentation für Entwickler
 
