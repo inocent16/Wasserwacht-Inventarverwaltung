@@ -1,6 +1,6 @@
 begin;
 
-select plan(8);
+select plan(10);
 
 -- auth.users trigger creates the profiles. New profiles are not privileged.
 insert into auth.users (id, email)
@@ -54,8 +54,15 @@ select is(
   'administrator can read inventory rows'
 );
 
+select throws_ok(
+  $insert into public.articles (name, category) values ('bypass', 'test')$,
+  '42501',
+  null,
+  'administrator cannot bypass audited RPC with direct table INSERT'
+);
+
 select lives_ok(
-  $$select public.create_location('pgTAP admin location', 'created by database test')$$,
+  $select public.create_location('pgTAP admin location', 'created by database test')$,
   'administrator can create a location through the audited RPC'
 );
 
@@ -65,6 +72,14 @@ select is(
   'one successful location RPC produces exactly one AuditLog row'
 );
 
+reset role;
+select throws_ok(
+  $update public.audit_log set event_type = 'tampered' where event_type = 'location_created'$,
+  '55000',
+  null,
+  'audit_log trigger prevents UPDATE even when table privileges exist'
+);
+set local role authenticated;
 set local request.jwt.claim.sub = '22222222-2222-4222-8222-222222222222';
 
 select is(
