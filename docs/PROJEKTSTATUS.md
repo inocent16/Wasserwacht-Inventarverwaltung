@@ -17,18 +17,22 @@ Vorhanden:
 - EF-Core-DbContext und einfacher Health-Endpunkt
 - grundlegende Anforderungen und Entscheidungen in `docs/`
 
-Noch nicht vorhanden:
-- Datenbankmigrationen
-- fachliche Services und Validierungen
-- CRUD- und Bewegungsendpunkte
-- Authentifizierung und Benutzerverwaltung (für Version 1.0 verpflichtend; zunächst ausschließlich Rolle Administrator)
-- zentraler `AuditLogWriter`, registriert in Dependency Injection; fügt je fachlicher Aktion genau einen Eintrag zum gemeinsamen DbContext hinzu und speichert nicht separat
-- Schutz im DbContext: Auditlog-Einträge können nach dem Anlegen nicht geändert oder gelöscht werden
-- Initialmigration `20261126203000_InitialInventorySchema` für `Articles`, `Locations`, `StockItems` und die einzige zentrale `AuditLog`-Tabelle; EF-Core-Modellsnapshot vorhanden
+Bereits vorhanden:
+- Initialmigration `20261126203000_InitialInventorySchema` und Migration für Benutzerkonten
 - EF-Core-Designzeitfactory und CI-Prüfung auf Abweichungen zwischen Modell und Snapshot
-- PostgreSQL-Integrationstest in CI wendet die Migration auf PostgreSQL 17 an und prüft `AuditLog`, JSONB sowie das Fehlen einer `StockMovements`-Tabelle
-- Integration des Schreibdiensts in die noch nicht vorhandenen fachlichen Schreibservices; dadurch noch keine produktive Transaktionskette
-- React-Frontend
+- PostgreSQL-Integrationstest in CI
+- zentraler `AuditLogWriter`; ergänzt Einträge am gemeinsamen DbContext ohne separat zu speichern
+- Auditlog-Schutz im DbContext gegen Änderungen und Löschungen
+- Administrator-Anmeldung mit Session-Cookie, CSRF-Schutz, Login-Rate-Limit und einmaliger interaktiver Ersteinrichtung
+- React-/TypeScript-Frontend mit Login, Logout, Session-Prüfung und Vite-API-Proxy
+- getrennte GitHub-Actions-Workflows für Backend und Frontend
+
+Noch nicht vorhanden:
+- fachliche Services und Validierungen
+- CRUD-Endpunkte für Artikel und Standorte
+- Bestandsabfragen und Bestandsänderungen (Zugang, Verschiebung, Sammelentnahme)
+- Integration des AuditLogWriter in fachliche Schreibservices; dadurch noch keine produktive Transaktionskette für Materialaktionen
+- vollständige Inventaroberfläche im Frontend
 - Docker-/lokale Startkonfiguration
 
 **Wichtig:** Der vorhandene Code ist weiterhin ein technisches Grundgerüst, keine lauffähige Produktversion. Das EF-Core-Modell enthält die zentrale `AuditLog`-Tabelle; der Build und alle 13 vorhandenen Tests laufen in GitHub Actions erfolgreich. Eine echte PostgreSQL-Integration der Migration und der Transaktionskette, fachliche API-Endpunkte und vollständige Anwendungstests existieren noch nicht.
