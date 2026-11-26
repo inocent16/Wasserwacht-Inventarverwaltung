@@ -10,7 +10,7 @@ Diese Punkte sind bewusst offen. Entwickler sollen keine stillschweigenden Produ
 4. **Sammelentnahme-Zuordnung:** Soll eine Entnahmeposition einen konkreten Materialposten auswählen (damit Ablaufdatum/Charge eindeutig sind), oder darf die Anwendung eine Menge automatisch über mehrere passende Posten verteilen? Falls automatisch: nach welcher Reihenfolge (z. B. frühestes Ablaufdatum zuerst)?
 5. **Löschen von Artikeln/Standorten:** Welche Regeln gelten bei vorhandenen Beständen und historischen Referenzen? Technisch ist Soft-Delete/Archivierung eine Option, aber noch nicht beschlossen.
 6. **Auditlog-Datenformat:** Welche Felder und Referenzierungsstrategie soll das zentrale Auditlog verwenden? Noch festzulegen sind Ereignistyp, betroffener Bereich/Datensatz, Schema und Referenzierungsstrategie, Zeitpunkt sowie die Gruppierung zusammengehöriger Vorgänge (z. B. Sammelentnahme). Bestätigt ist, dass jeder Eintrag den vollständigen Vorher- und Nachher-Zustand der Änderung speichert, soweit anwendbar, und den auslösenden Benutzer eindeutig zuordnet. Die Grundsatzentscheidung ist bereits getroffen: ein zentrales Auditlog ist die einzige Historienquelle; eine separate Materialbewegungstabelle gibt es nicht.
-7. **Benutzeranmeldung für Version 1.0:** Soll bereits die erste lokale Version einen Login haben, und wie werden lokale Benutzer angelegt?
+7. **Anlage und Verwaltung lokaler Benutzerkonten:** Die Benutzeranmeldung mit persönlichen Konten ist für Version 1.0 beschlossen. Noch festzulegen ist, wie lokale Benutzerkonten initial angelegt und später verwaltet werden.
 
 ## Technisch
 
