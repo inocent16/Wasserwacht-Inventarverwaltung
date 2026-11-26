@@ -21,7 +21,7 @@ Noch nicht vorhanden:
 - fachliche Services und Validierungen
 - CRUD- und Bewegungsendpunkte
 - Authentifizierung und Benutzerverwaltung (für Version 1.0 verpflichtend; zunächst ausschließlich Rolle Administrator)
-- zentrales Auditlog als implementierte Historienquelle
+- zentrales Auditlog als implementierte Historienquelle (noch nicht implementiert; genau eine Zeile je abgeschlossener fachlicher Aktion)
 - React-Frontend
 - xUnit-Modelltests unter `backend/tests/Wasserwacht.Api.Tests` (4 Tests)
 - GitHub-Actions-CI mit erfolgreichem Restore, Build und Testlauf
