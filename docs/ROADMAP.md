@@ -20,7 +20,7 @@
 - [x] Auditlog-Einträge gegen nachträgliches Ändern und Löschen schützen
 - [x] Initialmigration für Artikel, Standorte, Materialposten und die einzige zentrale AuditLog-Tabelle erstellen
 - [x] EF-Core-Designzeitfactory und CI-Prüfung auf ausstehende Modelländerungen ergänzen
-- [ ] Migration gegen eine echte PostgreSQL-Instanz anwenden und Integrationstest ausführen
+- [x] Migration in CI gegen einen kurzlebigen PostgreSQL-17-Dienst anwenden und Schema/JSONB/einzige AuditLog-Tabelle prüfen
 - [ ] Auditlog in alle fachlichen Schreibservices integrieren; Änderung und Eintrag gemeinsam transaktional speichern
 
 ## Phase 2 – Stammdaten
