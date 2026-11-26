@@ -37,8 +37,10 @@ Eine lokal betreibbare Webanwendung zur Verwaltung von Artikeln, Standorten, akt
 - Passende Materialposten werden sowohl bei Zugang als auch bei Verschiebung zusammengeführt.
 - Unterschiedliche bekannte Chargennummern bleiben getrennt.
 - Bei vollständiger Entnahme wird der Materialposten gelöscht. Die zugehörige Historie bleibt dauerhaft erhalten.
-- Ein zentrales Auditlog ist die einzige Quelle der Änderungshistorie und gehört zum Pflichtumfang.
-- Bestandsänderungen und zugehörige Auditlog-Einträge werden transaktional gespeichert.
+- Genau eine zentrale Auditlog-Tabelle ist die einzige Quelle der Änderungshistorie und gehört zum Pflichtumfang.
+- Jede erfolgreiche fachliche Aktion erzeugt genau einen Auditlog-Eintrag mit vollständigem Vorher- und Nachher-Zustand aller betroffenen Daten.
+- Die gesamte Bestandsänderung und dieser eine Auditlog-Eintrag werden gemeinsam transaktional gespeichert.
+- Es gibt keine `StockMovement`-Tabelle und keine separate Bewegungshistorie.
 - Zum Start gibt es ausschließlich die Rolle Administrator; Konten werden durch einen Administrator angelegt.
 - Optionale Funktionen dürfen keine Voraussetzung für den Kernbetrieb sein.
 
@@ -53,7 +55,7 @@ Mögliche unabhängig nutzbare Erweiterungen sind Sollbestände und Soll-Ist-War
 - [Entscheidungen](docs/ENTSCHEIDUNGEN.md)
 - [Offene Fragen – vor betroffenen Implementierungen klären](docs/OFFENE_FRAGEN.md)
 - [Architektur](docs/ARCHITEKTUR.md)
-- [Auditlog-Konzept (Entwurf)](docs/AUDITLOG-KONZEPT.md)
+- [Auditlog-Konzept](docs/AUDITLOG-KONZEPT.md)
 - [Fachliches Datenmodell](docs/DOMAENENMODELL.md)
 - [API-Kontrakt (Entwurf)](docs/API-KONTRAKT.md)
 - [Entwicklerstart](docs/ENTWICKLERSTART.md)
