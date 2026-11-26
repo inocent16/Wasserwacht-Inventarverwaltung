@@ -1,53 +1,47 @@
 # Entwicklerstart
 
 ## Voraussetzungen
-
-- .NET SDK passend zum Backend-Ziel-Framework (aktuell im Projekt: .NET 10)
-- PostgreSQL
-- Node.js LTS und npm (für das geplante React-Frontend)
+- Node.js 22 oder neuer
+- npm
+- Supabase-Cloud-Projekt für Auth- und Datenbanktests
 - Git
 
-## Repository-Struktur
+## Frontend starten
+1. `frontend/.env.example` nach `frontend/.env.local` kopieren.
+2. Supabase Project URL und Publishable Key aus dem Supabase-Dashboard eintragen.
+3. Im Frontend-Verzeichnis ausführen:
 
-```text
-backend/
-  src/Wasserwacht.Api/
-    Domain/
-    Data/
-frontend/
-docs/
-```
+~~~bash
+cd frontend
+npm install
+npm run dev
+~~~
 
-## Backend lokal starten
+Die Anwendung ist anschließend unter http://localhost:3000 erreichbar.
 
-1. PostgreSQL lokal starten.
-2. Eine Datenbank mit dem Namen `wasserwacht_inventory` anlegen.
-3. Connection String über die Umgebungsvariable `WASSERWACHT_DB` setzen oder lokal in User Secrets / Development-Konfiguration hinterlegen.
-4. Im Projektverzeichnis ausführen:
+Für reine UI-Arbeit können die Zugangsdaten zunächst leer bleiben. Sobald Supabase-Funktionen aufgerufen werden, müssen URL und Publishable Key konfiguriert sein.
 
-```bash
-cd backend/src/Wasserwacht.Api
-dotnet restore
-dotnet build
-dotnet run
-```
+## Supabase Cloud vorbereiten
+1. Ein Supabase-Projekt in der gewünschten EU-Region erstellen (Frankfurt ist bevorzugt, aber noch nicht festgelegt).
+2. Project URL und Publishable Key aus dem API-/Connect-Bereich übernehmen.
+3. SQL-Schemaänderungen ausschließlich als versionierte Dateien unter `supabase/migrations/` ablegen und über Supabase CLI anwenden.
+4. RLS-Policies für jede exponierte Tabelle prüfen und durch Tests absichern.
 
-Health-Endpunkt: `GET /health`.
+Das Repository ist noch nicht mit einer konkreten Supabase-Instanz verbunden. Es gibt daher noch keine produktive Datenbank oder Zugangsdaten im Repository.
 
-OpenAPI wird im Development-Modus bereitgestellt, sofern die Anwendung erfolgreich startet.
+## Sicherheitsregeln
+- Keine echten Zugangsdaten oder API-Secrets committen.
+- Publishable Key darf im Browser verwendet werden; er ersetzt keine RLS-Policy.
+- Service-Role-/Secret-Keys niemals mit `VITE_`-Präfix versehen.
+- Admin-API-Aufrufe dürfen nur serverseitig erfolgen.
+- Autorisierungsentscheidungen auf dem Server müssen den Benutzer gegen Supabase Auth verifizieren.
+- Authentifizierte Daten nicht in gemeinsam genutzten SSR-Caches legen.
 
-**Achtung:** Zum aktuellen Repository-Stand gibt es noch keine EF-Migrationen und keine automatische Datenbankinitialisierung. Vor fachlichen API-Tests müssen Migrationen erstellt und angewendet werden. Es gibt derzeit auch keine garantierte lokale Startbarkeit; die Befehle sind der vorgesehene Ablauf und müssen vom Entwickler verifiziert werden.
-
-## Frontend
-
-Das React-Projekt ist noch nicht angelegt. Es soll mit React, TypeScript und einem gepflegten Build-Tool (z. B. Vite) erstellt werden. Die konkrete Toolchain ist eine Implementierungsentscheidung; Versionen und Scripts müssen anschließend hier dokumentiert werden.
-
-## Konfiguration und Geheimnisse
-
-- Keine echten Passwörter oder produktiven Zugangsdaten committen.
-- Lokale Connection Strings über User Secrets oder Umgebungsvariablen bereitstellen.
-- `WASSERWACHT_DB` hat im vorhandenen Backend-Code Vorrang nach `ConnectionStrings:Inventory`-Fallback-Reihenfolge wie in `Program.cs` dokumentiert (derzeit wird zuerst die Konfiguration, danach die Umgebungsvariable gelesen).
+## Übergangsbestand
+Das Verzeichnis `backend/` enthält das bisherige ASP.NET-Core-/EF-Core-Grundgerüst. Es bleibt während der Migration als Referenz und Regression-Baseline erhalten. Es ist nicht mehr die Zielarchitektur und wird erst gelöscht, wenn Datenbankschema, Authentifizierung, AuditLog und Inventarfunktionen auf Supabase vollständig umgesetzt und getestet sind.
 
 ## Tests
-
-Für neue fachliche Regeln sind Unit- und Integrationstests vorzusehen. Bewegungen müssen insbesondere mit PostgreSQL-Integrationstests geprüft werden, weil Transaktions- und Concurrency-Verhalten datenbankabhängig ist.
+- Frontend: `npm run typecheck` und `npm run build`.
+- Datenbank: Migrationstests gegen PostgreSQL / Supabase-Testumgebung.
+- Sicherheit: RLS-Tests für anon, authenticated und Administrator.
+- Bestand: Integrationstests für Mengenvalidierung, Concurrency, Rollback und exakt einen AuditLog-Eintrag pro erfolgreicher Aktion.
