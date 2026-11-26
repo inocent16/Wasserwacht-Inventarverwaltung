@@ -63,4 +63,4 @@ Mögliche unabhängig nutzbare Erweiterungen sind Sollbestände und Soll-Ist-War
 
 ## Aktueller Entwicklungsstand
 
-Das Repository enthält ein erstes ASP.NET-Core-Grundgerüst und die fachliche/technische Entwicklerdokumentation. Es gibt noch keine vollständige API, keine Datenbankmigrationen, keine React-Anwendung und keine automatisierten Tests. Der Status ist in [docs/PROJEKTSTATUS.md](docs/PROJEKTSTATUS.md) detailliert beschrieben.
+Das Repository enthält ein ASP.NET-Core-Backend-Grundgerüst mit PostgreSQL-Migrationen, zentralem Auditlog und Administrator-Authentifizierung. Ein React-/TypeScript-Frontend mit Anmeldeoberfläche ist angelegt. Die vollständigen fachlichen CRUD- und Bestandsfunktionen sind noch in Entwicklung. Der Status ist in [docs/PROJEKTSTATUS.md](docs/PROJEKTSTATUS.md) detailliert beschrieben.
