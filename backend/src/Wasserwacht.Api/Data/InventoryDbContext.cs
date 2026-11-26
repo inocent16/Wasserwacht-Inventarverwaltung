@@ -11,6 +11,45 @@ public sealed class InventoryDbContext(DbContextOptions<InventoryDbContext> opti
     public DbSet<StockItem> StockItems => Set<StockItem>();
     public DbSet<AuditLogEntry> AuditLog => Set<AuditLogEntry>();
 
+    public override int SaveChanges()
+    {
+        EnsureAuditLogIsAppendOnly();
+        return base.SaveChanges();
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        EnsureAuditLogIsAppendOnly();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        EnsureAuditLogIsAppendOnly();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    public override Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureAuditLogIsAppendOnly();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void EnsureAuditLogIsAppendOnly()
+    {
+        var changedEntry = ChangeTracker.Entries<AuditLogEntry>()
+            .FirstOrDefault(entry =>
+                entry.State is EntityState.Modified or EntityState.Deleted);
+
+        if (changedEntry is not null)
+        {
+            throw new InvalidOperationException(
+                "AuditLog entries are append-only and cannot be updated or deleted.");
+        }
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Article>(entity =>
