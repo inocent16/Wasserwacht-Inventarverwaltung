@@ -18,7 +18,7 @@ Das Backend-Grundmodell enthält Artikel, Standorte und Materialposten. Für die
 
 ## Benutzeranmeldung
 
-Version 1.0 besitzt eine Benutzeranmeldung mit persönlichen Benutzerkonten. Auditlog-Einträge ordnen jede Änderung dem angemeldeten Benutzer zu. Das Verfahren zur Anlage und Verwaltung lokaler Benutzerkonten ist noch festzulegen.
+Version 1.0 besitzt eine Benutzeranmeldung mit persönlichen Benutzerkonten. Auditlog-Einträge ordnen jede Änderung dem angemeldeten Benutzer zu. Benutzerkonten werden ausschließlich durch einen Administrator angelegt; der Administrator stellt den neuen Benutzern ihre Zugangsdaten bereit.
 
 ## Historie / Auditlog
 
