@@ -22,7 +22,7 @@ Die Anwendung wird als Webanwendung mit getrenntem Frontend und Backend umgesetz
 
 ### Backend
 - zentrale fachliche Validierung
-- Bestandsänderungen und Bewegungsprotokollierung
+- Bestandsänderungen und Protokollierung aller Änderungen im zentralen Auditlog
 - Transaktionsgrenzen
 - Zusammenführungsregeln für Materialposten
 - Schutz vor negativen Beständen und konkurrierenden Änderungen
@@ -30,6 +30,8 @@ Die Anwendung wird als Webanwendung mit getrenntem Frontend und Backend umgesetz
 
 ### Datenbank
 - dauerhafte Stammdaten und Bestände
+- ein zentrales Auditlog als einzige Quelle der Änderungshistorie für alle Anwendungsbereiche
+- keine separate Materialbewegungstabelle
 - relationale Integritätsbedingungen
 - Transaktionen für alle mehrteiligen Bestandsänderungen
 - Migrationen versionieren das Schema
@@ -43,21 +45,23 @@ Die Schichten können zunächst in einem ASP.NET-Core-Projekt liegen; sie sollen
 - `Features/Articles/`: Artikel-Endpunkte, DTOs und Anwendungslogik
 - `Features/Locations/`: Standort-Endpunkte, DTOs und Anwendungslogik
 - `Features/Stock/`: Bestandsabfragen und Materialposten
-- `Features/Movements/`: Zugang, Verschiebung, Sammelentnahme und Historie
-- `Infrastructure/`: technische Querschnittsthemen
+- `Features/Movements/`: Zugang, Verschiebung, Sammelentnahme und Auswertung der Auditlog-Historie
+- `Infrastructure/`: technische Querschnittsthemen einschließlich Auditlog-Schreibdienst
 - `Common/`: Fehlerantworten und gemeinsame API-Bausteine
 
 ## Transaktionen und Konsistenz
 
-Jede Bestandsbewegung muss als eine atomare Datenbanktransaktion ablaufen. Bestand und dazugehöriger Historieneintrag werden gemeinsam gespeichert. Schlägt ein Teil fehl, wird die gesamte Transaktion zurückgerollt.
+Jede Bestandsbewegung muss als eine atomare Datenbanktransaktion ablaufen. Bestandsänderung und zugehöriger Auditlog-Eintrag werden gemeinsam gespeichert. Schlägt ein Teil fehl, wird die gesamte Transaktion zurückgerollt.
+
+Änderungen in anderen Anwendungsbereichen werden ebenfalls mit ihrem Auditlog-Eintrag konsistent gespeichert. Das Auditlog ist die einzige Quelle der Änderungshistorie; eine separate Materialbewegungstabelle wird nicht geführt.
 
 Bei parallelen Benutzern muss verhindert werden, dass zwei gleichzeitige Entnahmen denselben verfügbaren Bestand überziehen. Die konkrete Strategie (z. B. optimistische Concurrency mit RowVersion/Concurrency-Token oder gezielte Sperre) ist vor Implementierung der Bewegungsservices festzulegen und mit PostgreSQL zu testen.
 
 ## Historie und Löschung
 
-Fachlich bestätigt ist: Ein Materialposten wird bei vollständiger Entnahme gelöscht, seine Bewegungshistorie bleibt erhalten.
+Ein zentrales Auditlog protokolliert Änderungen in allen Anwendungsbereichen. Es ist die einzige Quelle der Historie; eine zusätzliche Materialbewegungstabelle ist ausdrücklich nicht vorgesehen. Die Bewegungsübersicht wird aus den relevanten Auditlog-Einträgen gebildet.
 
-Die bereitgestellte Projektübergabe beschreibt ein zentrales Auditlog und sieht keine separate Materialbewegungstabelle vor. Im aktuellen Code existiert dagegen bereits eine `StockMovement`-Entität. Ob diese als fachliche Bewegungshistorie bestehen bleibt oder durch ein zentrales Auditlog ersetzt wird, ist als offene Architekturentscheidung dokumentiert. Bis zur Klärung keine irreversible Schema-Migration darauf aufbauen.
+Audit-Einträge müssen unabhängig vom Lebenszyklus der betroffenen Datensätze erhalten bleiben. Historische Einträge dürfen daher nicht per Fremdschlüssel-Kaskade mit Artikeln, Standorten oder Materialposten gelöscht werden. Das konkrete Auditlog-Datenformat und die Referenzierungsstrategie werden vor der Implementierung festgelegt.
 
 ## Optionale Module
 
