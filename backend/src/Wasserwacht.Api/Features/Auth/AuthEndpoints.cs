@@ -22,7 +22,7 @@ public static class AuthEndpoints
             return Results.Ok(new { requestToken = tokens.RequestToken });
         }).AllowAnonymous();
 
-        auth.MapPost("/login", LoginAsync).AllowAnonymous();
+        auth.MapPost("/login", LoginAsync).AllowAnonymous().RequireRateLimiting("login");
         auth.MapPost("/logout", LogoutAsync).RequireAuthorization();
         auth.MapGet("/me", (ClaimsPrincipal principal) => Results.Ok(new
         {
