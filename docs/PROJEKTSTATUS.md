@@ -4,7 +4,7 @@ Stand: 26.11.2026
 Ziel: Version 1.0
 
 ## Kurzüberblick
-Es entsteht eine Webanwendung zur Verwaltung des Materials einer Wasserwacht-Ortsgruppe. Die Zielarchitektur wurde auf SolidJS + TanStack Start + Supabase Cloud umgestellt. Das bisherige C#-Backend bleibt während der Migration als Referenz erhalten.
+Die Zielarchitektur ist SolidJS + TanStack Start + Supabase Cloud. Das bisherige C#-Backend bleibt während der Migration als Referenz erhalten.
 
 ## Zieltechnologie
 - SolidJS 1.9
@@ -13,6 +13,7 @@ Es entsteht eine Webanwendung zur Verwaltung des Materials einer Wasserwacht-Ort
 - Supabase Cloud: PostgreSQL und Auth
 - `@supabase/ssr` für Cookie-basierte SSR-Sitzungen
 - TypeScript und Zod
+- SQL-Migrationen und pgTAP-Tests mit Supabase CLI
 
 Die stabile TanStack-Solid-Start-Version verwendet derzeit Solid 1.x. Solid 2 bleibt ein späteres Upgrade, sobald die zugehörige TanStack-Integration stabil ist.
 
@@ -27,23 +28,27 @@ Die stabile TanStack-Solid-Start-Version verwendet derzeit Solid 1.x. Solid 2 bl
 
 ### Neue Plattformbasis auf dem Migrationsbranch
 - React-Abhängigkeiten durch SolidJS ersetzt
-- TanStack Start und TanStack Router als Fullstack-/Routing-Grundlage
-- TanStack Query Provider und request-scoped QueryClient vorbereitet
-- Supabase Browser- und Server-Client mit `@supabase/ssr` vorbereitet
-- E-Mail-/Passwort-Login, Logout und serverseitige Session-Prüfung über Supabase Auth implementiert
-- Profile-/Administrator-Migration erstellt; neue Profile erhalten standardmäßig keine Rolle
-- Supabase-Umgebungsvariablen dokumentiert
-- Architektur- und Entwicklerdokumentation auf die Zielplattform umgestellt
+- TanStack Start, TanStack Router und TanStack Query eingerichtet
+- Supabase Browser- und Server-Client mit `@supabase/ssr`
+- E-Mail-/Passwort-Login, Logout und serverseitige Session-Prüfung über Supabase Auth
+- Profile-/Administrator-Migration; neue Profile erhalten standardmäßig keine Rolle
+- SQL-Tabellen für Artikel, Standorte, Materialposten und zentrale AuditLog-Historie
+- RLS-Policies und read-only Tabellenrechte für API-Rollen
+- auditiertes RPC für Artikel- und Standort-CRUD
+- transaktionale RPCs für Zugang, Verschiebung und Sammelentnahme
+- advisory-/row-level concurrency locks und Unique Identity Index
+- append-only Schutz für das zentrale AuditLog
+- Supabase CLI-Konfiguration mit deaktivierter öffentlicher Registrierung
+- pgTAP-Schema-/Berechtigungstests und separate Database-CI
+- Architektur- und Entwicklerdokumentation aktualisiert
 
-## Noch nicht vorhanden
-- Supabase-Cloud-Projekt und konfigurierte Secrets
-- SQL-Migrationen für das neue Schema
-- RLS-Policies und Sicherheitstests
-- initialer Administrator-Bootstrap und Admin-Einladungsfunktion (Bootstrap-Schritte sind dokumentiert)
-- fachliche CRUD-Funktionen für Artikel und Standorte
-- Bestandsabfragen sowie Zugang, Verschiebung und Sammelentnahme
-- transaktionale PostgreSQL-Funktionen und zentrale AuditLog-Implementierung
-- vollständige Inventaroberfläche
+## Noch nicht vorhanden / noch zu verifizieren
+- Supabase-Cloud-Projekt, Region und konfigurierte Secrets
+- Ausführung der Migrationen gegen eine echte Cloud-Instanz
+- lokaler Supabase-/pgTAP-Lauf und grüner Database-CI-Status (GitHub Actions prüfen)
+- ausführliche Verhaltenstests für Bestandsfunktionen, AuditLog-Rollback und Concurrency
+- Admin-Einladungsfunktion und Passwortänderung/-zurücksetzung
+- geschützte Anwendungsnavigation und vollständige Inventaroberfläche
 - Deployment-Konfiguration und End-to-End-Tests
 
 ## Verbindlicher Produktumfang
@@ -58,11 +63,9 @@ Die stabile TanStack-Solid-Start-Version verwendet derzeit Solid 1.x. Solid 2 bl
 Alle Mengen sind ganze Zahlen in Stück.
 
 ## Leitplanken
-- Keine automatische Standortanlage.
-- Keine Standorttypen und kein fest eingebauter Standort „Lager“.
+- Keine automatische Standortanlage, keine Standorttypen und kein fest eingebauter Standort „Lager“.
 - Artikel ohne Ablaufdatum werden unterstützt.
-- Passende Posten werden bei Zugang und Verschiebung zusammengeführt.
-- Unterschiedliche bekannte Chargennummern bleiben getrennt.
+- Bestände werden bei Zugang und Verschiebung nur mit exakt gleicher Artikel-/Standort-/Ablaufdatum-/Charge-/Hersteller-Identität zusammengeführt; NULL wird nicht mit einem bekannten Wert vermischt.
 - Vollständig entnommene Posten werden gelöscht, Historieneinträge bleiben.
 - Genau eine zentrale AuditLog-Tabelle, genau ein Eintrag pro erfolgreicher fachlicher Aktion.
 - Es gibt keine StockMovement-Tabelle und keine separate Bewegungshistorie.
@@ -72,4 +75,4 @@ Alle Mengen sind ganze Zahlen in Stück.
 - Optionale Funktionen dürfen den Kernbetrieb nicht blockieren.
 
 ## Nächste Schritte
-Siehe `ROADMAP.md`. Als Nächstes folgen Supabase-Projekt/Region, SQL-Schema und RLS. Danach Authentifizierung und Admin-Bootstrap, anschließend AuditLog und transaktionale Bestandsfunktionen.
+Siehe `ROADMAP.md`. Zuerst CI-/Datenbankmigrationen verifizieren und Fachfragen zu Merge/Löschen abschließen. Danach Admin-Einladungen, geschützte Navigation und Inventaroberfläche umsetzen.
