@@ -13,6 +13,9 @@
 - [ ] Health-/Readiness-Prüfung ergänzen
 - [ ] einheitliche Fehlerantworten und Validierung
 - [ ] Testprojekte und CI-Build einrichten
+- [ ] Authentifizierungsverfahren und sichere erstmalige Einrichtung des ersten Administratorkontos festlegen
+- [ ] Anmeldung mit persönlichen Konten und ausschließlich der Rolle `Administrator` implementieren
+- [ ] Konkretes Datenmodell und Schreibdienst für das zentrale Auditlog festlegen; vor den ersten fachlichen Schreibendpunkten umsetzen
 
 ## Phase 2 – Stammdaten
 - [ ] Artikel CRUD
@@ -46,7 +49,6 @@ Nur nach eigenständiger Priorisierung:
 - [ ] regelmäßige Kontrollen pro Standort
 - [ ] Nachfüllhinweise und Bestellkennzeichnung
 - [ ] Backup und Wiederherstellung
-- [ ] Benutzer/Rollen und erweitertes Auditlog
 
 ## Phase 6 – Qualität und Bereitstellung
 - [ ] End-to-End-Tests
