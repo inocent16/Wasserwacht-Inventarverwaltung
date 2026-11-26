@@ -18,7 +18,9 @@
 - [x] Zentrale `AuditLog`-Entität und EF-Core-Tabellenmodell anlegen (genau eine Zeile je erfolgreicher Aktion)
 - [x] Zentralen Auditlog-Schreibdienst implementieren und registrieren (ein Eintrag je Aktion; kein separates Speichern)
 - [x] Auditlog-Einträge gegen nachträgliches Ändern und Löschen schützen
-- [ ] Datenbankmigration für die zentrale AuditLog-Tabelle erstellen und testen
+- [x] Initialmigration für Artikel, Standorte, Materialposten und die einzige zentrale AuditLog-Tabelle erstellen
+- [x] EF-Core-Designzeitfactory und CI-Prüfung auf ausstehende Modelländerungen ergänzen
+- [ ] Migration gegen eine echte PostgreSQL-Instanz anwenden und Integrationstest ausführen
 - [ ] Auditlog in alle fachlichen Schreibservices integrieren; Änderung und Eintrag gemeinsam transaktional speichern
 
 ## Phase 2 – Stammdaten
