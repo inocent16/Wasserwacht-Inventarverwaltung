@@ -2,6 +2,18 @@
 
 Geplantes Frontend: React + TypeScript.
 
-Die Oberfläche beginnt mit der Kern-Lagerverwaltung: Artikel, Standorte, Bestände/Materialposten und Materialbewegungen.
+Das Frontend wird als Webclient für die ASP.NET-Core-API umgesetzt. Es enthält keine maßgebliche Lagerlogik: Bestandsänderungen und Zusammenführungsregeln werden vom Backend ausgeführt.
 
-Noch kein produktiver Code vorhanden.
+## Geplante Hauptbereiche
+
+- Artikel
+- Standorte
+- Bestände je Standort
+- Zugang
+- Verschiebung
+- Sammelentnahme
+- Bewegungshistorie
+
+Das Frontend-Projekt und seine Toolchain sind noch nicht angelegt. Vite kann als Build-Tool verwendet werden, ist aber noch nicht verbindlich festgelegt.
+
+Siehe `../docs/API-KONTRAKT.md` und `../docs/ROADMAP.md`.
