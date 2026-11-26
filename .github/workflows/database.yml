@@ -1,0 +1,34 @@
+name: Supabase Database
+
+on:
+  push:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/database.yml"
+  pull_request:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/database.yml"
+
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: latest
+
+      - name: Start local Supabase stack and apply migrations
+        # Allow the CLI to create its local service lockfile on a clean runner.
+        run: CI=false supabase start
+
+      - name: Run PostgreSQL / pgTAP tests
+        run: supabase test db
+
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop --no-backup
