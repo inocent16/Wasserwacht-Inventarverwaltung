@@ -18,11 +18,11 @@ Das Backend-Grundmodell enthält Artikel, Standorte und Materialposten. Für die
 
 ## Benutzeranmeldung
 
-Version 1.0 besitzt eine Benutzeranmeldung mit persönlichen Benutzerkonten. Auditlog-Einträge ordnen jede Änderung dem angemeldeten Benutzer zu. Benutzerkonten werden ausschließlich durch einen Administrator angelegt; der Administrator stellt den neuen Benutzern ihre Zugangsdaten bereit.
+Version 1.0 besitzt eine Benutzeranmeldung mit persönlichen Benutzerkonten. Zum Start gibt es ausschließlich die Rolle `Administrator`; eine zusätzliche Standardbenutzerrolle oder feinere Berechtigungsstufen sind zunächst nicht vorgesehen. Jedes angelegte Konto erhält diese Rolle. Benutzerkonten werden ausschließlich durch einen Administrator angelegt; der Administrator stellt den neuen Benutzern ihre Zugangsdaten bereit. Auditlog-Einträge ordnen jede Änderung dem angemeldeten Benutzer zu. Das technische Anmeldeverfahren und die sichere erstmalige Einrichtung des ersten Administratorkontos werden vor der Implementierung festgelegt.
 
 ## Historie / Auditlog
 
-- Ein zentrales Auditlog protokolliert Änderungen in allen Anwendungsbereichen.
+- Das zentrale Auditlog ist verbindlicher Bestandteil des Kernsystems und protokolliert Änderungen in allen Anwendungsbereichen.
 - Es gibt keine zusätzliche, separate Materialbewegungstabelle.
 - Die Bewegungshistorie wird aus den passenden Auditlog-Einträgen dargestellt.
 - Audit-Einträge bleiben unabhängig vom Lebenszyklus der betroffenen Stammdaten und Materialposten erhalten; keine Kaskadenlöschung historischer Daten.
