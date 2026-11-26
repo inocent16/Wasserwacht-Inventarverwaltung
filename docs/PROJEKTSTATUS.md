@@ -30,6 +30,8 @@ Die stabile TanStack-Solid-Start-Version verwendet derzeit Solid 1.x. Solid 2 bl
 - TanStack Start und TanStack Router als Fullstack-/Routing-Grundlage
 - TanStack Query Provider und request-scoped QueryClient vorbereitet
 - Supabase Browser- und Server-Client mit `@supabase/ssr` vorbereitet
+- E-Mail-/Passwort-Login, Logout und serverseitige Session-Prüfung über Supabase Auth implementiert
+- Profile-/Administrator-Migration erstellt; neue Profile erhalten standardmäßig keine Rolle
 - Supabase-Umgebungsvariablen dokumentiert
 - Architektur- und Entwicklerdokumentation auf die Zielplattform umgestellt
 
@@ -37,7 +39,7 @@ Die stabile TanStack-Solid-Start-Version verwendet derzeit Solid 1.x. Solid 2 bl
 - Supabase-Cloud-Projekt und konfigurierte Secrets
 - SQL-Migrationen für das neue Schema
 - RLS-Policies und Sicherheitstests
-- Supabase-Auth-Flows und initiale Administratoranlage
+- initialer Administrator-Bootstrap und Admin-Einladungsfunktion (Bootstrap-Schritte sind dokumentiert)
 - fachliche CRUD-Funktionen für Artikel und Standorte
 - Bestandsabfragen sowie Zugang, Verschiebung und Sammelentnahme
 - transaktionale PostgreSQL-Funktionen und zentrale AuditLog-Implementierung
